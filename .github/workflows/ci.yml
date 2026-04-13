@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        rust: [stable, 1.75.0]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        toolchain: ${{ matrix.rust }}
+
+    - name: Cache cargo
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          target
+        key: ${{ runner.os }}-cargo-${{ matrix.rust }}-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Build
+      run: cargo build --workspace --verbose
+
+    - name: Run tests
+      run: cargo test --workspace --verbose
+
+    - name: Check formatting
+      if: matrix.rust == 'stable' && matrix.os == 'ubuntu-latest'
+      run: cargo fmt --all -- --check
+
+    - name: Clippy
+      if: matrix.rust == 'stable' && matrix.os == 'ubuntu-latest'
+      run: cargo clippy --workspace -- -D warnings
+
+  generate-tables:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install NumPy
+      run: pip install numpy
+
+    - name: Generate lookup tables
+      run: python3 tools/precompute/generate_blobs.py --verify
+
+    - name: Upload tables
+      uses: actions/upload-artifact@v4
+      with:
+        name: gate-lookup-tables
+        path: data/gates/

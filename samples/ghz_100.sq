@@ -1,0 +1,13 @@
+# ghz_100.sq — 100-qubit GHZ state on a laptop
+# Demonstrates sparse engine: 100 qubits in ~100 bytes of memory
+
+simulate(engine="chunked") {
+    let q = quantum_register(100)
+    H(q[0])
+    for i in range(99) {
+        CNOT(q[i], q[i+1])
+    }
+    print(f"Non-zero amplitudes: {engine_nnz()}")
+    let results = measure_all(q, shots=200)
+    print("Histogram:", results)
+}

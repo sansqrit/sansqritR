@@ -1,0 +1,11 @@
+# hello.sq — Your first Sansqrit program
+print("Hello, Quantum World!")
+
+# Create a Bell state (two maximally entangled qubits)
+simulate {
+    let q = quantum_register(2)
+    H(q[0])
+    CNOT(q[0], q[1])
+    let result = measure_all(q, shots=1000)
+    print("Bell state:", result)
+}

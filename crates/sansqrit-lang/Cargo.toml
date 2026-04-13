@@ -1,0 +1,24 @@
+[package]
+name = "sansqrit-lang"
+description = "The Sansqrit DSL compiler and interpreter — hybrid classical-quantum programming language for scientists"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[[bin]]
+name = "sansqrit"
+path = "src/main.rs"
+
+[dependencies]
+sansqrit-core = { path = "../sansqrit-core" }
+sansqrit-stdlib = { path = "../sansqrit-stdlib" }
+num-complex = { workspace = true }
+rand = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+regex = { workspace = true }
+log = { workspace = true }
+env_logger = { workspace = true }

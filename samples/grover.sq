@@ -1,0 +1,38 @@
+# grover.sq — Grover's search algorithm
+simulate {
+    let n_qubits = 5
+    let q = quantum_register(n_qubits)
+    let target = 13
+    
+    # Uniform superposition
+    for i in range(n_qubits) { H(q[i]) }
+    
+    # Grover iterations
+    let n_iter = int(PI / 4 * sqrt(2 ** n_qubits))
+    for iter in range(n_iter) {
+        # Oracle: flip phase of target state
+        for i in range(n_qubits) {
+            if ((target >> i) & 1) == 0 { X(q[i]) }
+        }
+        # Multi-controlled Z
+        H(q[n_qubits - 1])
+        Toffoli(q[0], q[1], q[2])
+        H(q[n_qubits - 1])
+        for i in range(n_qubits) {
+            if ((target >> i) & 1) == 0 { X(q[i]) }
+        }
+        
+        # Diffusion operator
+        for i in range(n_qubits) { H(q[i]) }
+        for i in range(n_qubits) { X(q[i]) }
+        H(q[n_qubits - 1])
+        Toffoli(q[0], q[1], q[2])
+        H(q[n_qubits - 1])
+        for i in range(n_qubits) { X(q[i]) }
+        for i in range(n_qubits) { H(q[i]) }
+    }
+    
+    let result = measure_all(q, shots=1000)
+    print(f"Searching for: {target}")
+    print("Results:", result)
+}

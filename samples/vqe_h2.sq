@@ -1,0 +1,21 @@
+# vqe_h2.sq — VQE ground state energy of H2 molecule
+import chemistry
+
+simulate {
+    let q = quantum_register(4)
+    
+    # Simple ansatz for H2
+    let theta = 0.5
+    X(q[0])
+    X(q[1])
+    Ry(q[0], theta)
+    CNOT(q[0], q[1])
+    CNOT(q[1], q[2])
+    CNOT(q[2], q[3])
+    
+    let energy = expectation_z(q[0])
+    print(f"VQE Energy estimate: {energy:.6f}")
+    
+    let result = measure_all(q, shots=10000)
+    print("State distribution:", result)
+}

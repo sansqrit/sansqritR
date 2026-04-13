@@ -1,0 +1,13 @@
+[package]
+name = "sansqrit-biology"
+description = "Sansqrit biology package"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+sansqrit-core = { path = "../sansqrit-core" }
+num-complex = { workspace = true }
+rand = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }

@@ -1,36 +1,18 @@
-# Node
-node_modules/
-npm-debug.log*
-
-# Rust build
-target/
-quantum_engine/target/
-
-# WASM (generated — build with build.sh)
-wasm_pkg/
-
-# Pre-computed JSON (generated — run precompute.py)
-# OPTIONAL: You CAN commit precomputed/ to skip regeneration on clone
-# precomputed/
-
-# Firebase
-.firebase/
-.firebaserc.local
-
-# Editor
-.vscode/
-.idea/
+/target/
+**/*.rs.bk
+Cargo.lock
 *.swp
 *.swo
+*~
+
+# Generated lookup tables (user should generate locally)
+data/gates/*.bin
+
+# IDE
+.vscode/
+.idea/
+*.iml
 
 # OS
 .DS_Store
 Thumbs.db
-
-# Environment
-.env
-.env.local
-
-# Logs
-*.log
-logs/
