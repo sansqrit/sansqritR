@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sansqrit DSL — Complete Syntax Guide &amp; Workshop</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0e12;--bg2:#12151b;--bg3:#181c24;--card:#1a1e27;--border:#252a35;--text:#c8cdd8;--text2:#8891a0;--h:#e8ecf2;--accent:#d4a853;--accent2:#e8c97a;--accent-glow:rgba(212,168,83,0.15);--green:#5ccf7f;--blue:#5b9cf5;--red:#e05656;--purple:#b58cf5;--cyan:#5bcfcf;--code-bg:#0f1218;--sidebar-w:280px;--font:'DM Sans',sans-serif;--mono:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.7;font-size:15px}
+::selection{background:var(--accent);color:var(--bg)}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* Top header bar */
+.top-bar{position:fixed;top:0;left:0;right:0;height:56px;background:rgba(12,14,18,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;z-index:1000;gap:16px}
+.top-bar .logo{font-family:var(--mono);font-weight:700;font-size:17px;color:var(--accent);letter-spacing:1px}
+.top-bar .logo span{color:var(--text2);font-weight:400;font-size:13px;margin-left:8px}
+.top-bar nav{margin-left:auto;display:flex;gap:20px}
+.top-bar nav a{color:var(--text2);text-decoration:none;font-size:13px;font-weight:500;transition:color .2s}
+.top-bar nav a:hover,.top-bar nav a.active{color:var(--accent)}
+
+/* Layout */
+.layout{display:flex;margin-top:56px;min-height:calc(100vh - 56px)}
+
+/* Sidebar */
+.sidebar{position:fixed;top:56px;left:0;bottom:0;width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;padding:20px 0;z-index:100}
+.sidebar h4{padding:8px 20px 4px;font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--accent);font-weight:700;margin-top:12px}
+.sidebar h4:first-child{margin-top:0}
+.sidebar a{display:block;padding:5px 20px 5px 28px;font-size:13px;color:var(--text2);text-decoration:none;transition:all .15s;border-left:2px solid transparent}
+.sidebar a:hover{color:var(--h);background:var(--accent-glow);border-left-color:var(--accent)}
+.sidebar a.active{color:var(--accent);border-left-color:var(--accent);background:var(--accent-glow)}
+
+/* Main content */
+.main{margin-left:var(--sidebar-w);flex:1;padding:40px 48px 80px;max-width:900px}
+
+/* Hero */
+.hero{margin-bottom:48px;padding:40px;background:linear-gradient(135deg,var(--card),var(--bg3));border:1px solid var(--border);border-radius:16px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;right:-20%;width:300px;height:300px;background:radial-gradient(circle,var(--accent-glow),transparent);pointer-events:none}
+.hero h1{font-family:'Playfair Display',serif;font-size:36px;font-weight:800;color:var(--h);margin-bottom:12px}
+.hero h1 span{color:var(--accent)}
+.hero p{font-size:16px;color:var(--text2);max-width:600px;line-height:1.8}
+.hero .badge{display:inline-block;padding:4px 12px;background:var(--accent-glow);border:1px solid rgba(212,168,83,0.3);border-radius:20px;font-size:11px;color:var(--accent);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:16px}
+
+/* Sections */
+section{margin-bottom:56px}
+section h2{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--h);margin-bottom:8px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+section h2 .num{color:var(--accent);font-family:var(--mono);font-size:16px;font-weight:600;margin-right:8px}
+section h3{font-size:17px;font-weight:600;color:var(--accent2);margin:28px 0 12px}
+section p{margin-bottom:14px;color:var(--text)}
+
+/* Info boxes */
+.info{padding:16px 20px;border-radius:10px;margin:16px 0;font-size:14px;border-left:3px solid}
+.info.tip{background:rgba(92,207,127,0.06);border-color:var(--green);color:var(--green)}
+.info.warn{background:rgba(224,86,86,0.06);border-color:var(--red);color:var(--red)}
+.info.note{background:var(--accent-glow);border-color:var(--accent);color:var(--accent2)}
+.info strong{display:block;margin-bottom:4px}
+
+/* Code blocks */
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;padding:18px 22px;margin:14px 0 20px;overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.7;color:#c8cdd8;position:relative}
+pre .tag{position:absolute;top:8px;right:12px;font-size:10px;color:var(--text2);background:var(--bg3);padding:2px 8px;border-radius:4px}
+code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:2px 6px;border-radius:4px;color:var(--accent2)}
+pre code{background:none;padding:0}
+
+/* Syntax highlighting classes */
+.kw{color:#c678dd}.str{color:#98c379}.num{color:#d19a66}.cm{color:#5c6370;font-style:italic}.fn{color:#61afef}.op{color:#56b6c2}.type{color:#e5c07b}.gate{color:#e06c75;font-weight:600}
+
+/* Table */
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13px}
+th{text-align:left;padding:10px 14px;background:var(--bg3);color:var(--accent);font-weight:600;border-bottom:2px solid var(--border);font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+td{padding:9px 14px;border-bottom:1px solid var(--border);color:var(--text)}
+tr:hover td{background:rgba(212,168,83,0.03)}
+td code{font-size:12px}
+
+/* Steps */
+.step{display:flex;gap:16px;margin:20px 0;padding:16px;background:var(--card);border:1px solid var(--border);border-radius:10px}
+.step-num{flex-shrink:0;width:36px;height:36px;border-radius:50%;background:var(--accent);color:var(--bg);font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;font-family:var(--mono)}
+.step-body h4{color:var(--h);font-size:15px;margin-bottom:4px}
+.step-body p{font-size:13px;color:var(--text2);margin:0}
+
+/* Responsive */
+@media(max-width:900px){.sidebar{display:none}.main{margin-left:0;padding:24px 20px}}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="logo">SANSQRIT <span>DSL Syntax Guide v0.1.0</span></div>
+  <nav>
+    <a href="dsl-syntax.html" class="active">Syntax Guide</a>
+    <a href="sansqrit-programs.html">120+ Programs</a>
+    <a href="https://github.com/sansqrit-lang/sansqrit">GitHub</a>
+  </nav>
+</div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <h4>Getting Started</h4>
+  <a href="#intro">What is Sansqrit?</a>
+  <a href="#install">Installation</a>
+  <a href="#first-program">Your First Program</a>
+  <a href="#how-it-works">How It Works</a>
+
+  <h4>Language Basics</h4>
+  <a href="#variables">Variables &amp; Types</a>
+  <a href="#operators">Operators</a>
+  <a href="#strings">Strings &amp; F-Strings</a>
+  <a href="#comments">Comments</a>
+
+  <h4>Control Flow</h4>
+  <a href="#if-else">If / Else</a>
+  <a href="#for-loops">For Loops</a>
+  <a href="#while-loops">While Loops</a>
+  <a href="#match">Pattern Matching</a>
+
+  <h4>Data Structures</h4>
+  <a href="#lists">Lists &amp; Arrays</a>
+  <a href="#dicts">Dictionaries</a>
+  <a href="#tuples">Tuples</a>
+  <a href="#sets">Sets</a>
+  <a href="#comprehensions">Comprehensions</a>
+
+  <h4>Functions</h4>
+  <a href="#functions">Defining Functions</a>
+  <a href="#lambdas">Lambdas &amp; Closures</a>
+  <a href="#pipeline">Pipeline Operator</a>
+  <a href="#decorators">Decorators</a>
+
+  <h4>OOP</h4>
+  <a href="#classes">Classes</a>
+  <a href="#inheritance">Inheritance</a>
+  <a href="#structs">Structs</a>
+
+  <h4>Quantum Computing</h4>
+  <a href="#qubits">Quantum Registers</a>
+  <a href="#gates-single">Single-Qubit Gates</a>
+  <a href="#gates-two">Two-Qubit Gates</a>
+  <a href="#gates-three">Three-Qubit Gates</a>
+  <a href="#measurement">Measurement</a>
+  <a href="#engines">Engine Tiers</a>
+
+  <h4>Advanced</h4>
+  <a href="#algorithms">Built-in Algorithms</a>
+  <a href="#hardware">Hardware Export</a>
+  <a href="#packages">Science Packages</a>
+  <a href="#error-handling">Error Handling</a>
+  <a href="#file-io">File I/O</a>
+  <a href="#extending">Extending Sansqrit</a>
+</aside>
+
+<main class="main">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="badge">Workshop &amp; Reference</div>
+  <h1>Sansqrit <span>DSL Syntax</span> Guide</h1>
+  <p>A complete step-by-step workshop to learn the Sansqrit quantum programming language from zero. Designed for scientists — no programming experience required.</p>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- GETTING STARTED -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+
+<section id="intro">
+<h2><span class="num">01</span> What is Sansqrit?</h2>
+<p>Sansqrit is a free, open-source programming language that lets scientists run quantum computations using simple, readable syntax. It looks like Python but compiles to fast Rust code under the hood.</p>
+
+<div class="info note"><strong>Key Idea</strong> You write simple code → Sansqrit handles all the complexity of quantum simulation, sparse matrices, sharding, and hardware export automatically.</div>
+
+<h3>Why Use Sansqrit Instead of Qiskit or Cirq?</h3>
+<table>
+<tr><th>Feature</th><th>Qiskit/Cirq</th><th>Sansqrit</th></tr>
+<tr><td>Lines for VQE on H₂</td><td>60+ lines</td><td>5 lines</td></tr>
+<tr><td>Need Python packaging skills</td><td>Yes</td><td>No</td></tr>
+<tr><td>100-qubit simulation on laptop</td><td>Impossible</td><td>Built-in (sparse engine)</td></tr>
+<tr><td>Pre-computed gate lookup</td><td>No</td><td>O(1) table lookup, 50–200× faster</td></tr>
+<tr><td>Built-in science packages</td><td>Separate installs</td><td>7 packages included</td></tr>
+</table>
+</section>
+
+<section id="install">
+<h2><span class="num">02</span> Installation — Step by Step</h2>
+<p>Follow these steps exactly. The whole process takes 15–20 minutes.</p>
+
+<div class="step"><div class="step-num">1</div><div class="step-body"><h4>Install Rust (the engine that powers Sansqrit)</h4><p>Open your terminal and paste this command. When prompted, type <code>1</code> and press Enter.</p></div></div>
+<pre><code><span class="cm"># macOS / Linux:</span>
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source $HOME/.cargo/env
+
+<span class="cm"># Windows: Download from https://rustup.rs and run the installer</span></code></pre>
+
+<div class="step"><div class="step-num">2</div><div class="step-body"><h4>Install Python and NumPy (for lookup tables)</h4><p>Python generates the pre-computed gate tables that make Sansqrit fast.</p></div></div>
+<pre><code><span class="cm"># macOS:</span>
+brew install python3 && pip3 install numpy
+
+<span class="cm"># Ubuntu/Debian:</span>
+sudo apt-get install -y python3 python3-pip && pip3 install numpy
+
+<span class="cm"># Windows (in PowerShell):</span>
+winget install Python.Python.3.11
+pip install numpy</code></pre>
+
+<div class="step"><div class="step-num">3</div><div class="step-body"><h4>Install Sansqrit</h4><p>This downloads and compiles Sansqrit. First run takes 5–8 minutes — don't close the terminal.</p></div></div>
+<pre><code>cargo install sansqrit-lang</code></pre>
+
+<div class="step"><div class="step-num">4</div><div class="step-body"><h4>Generate Lookup Tables (one-time, ~30 seconds)</h4><p>This pre-computes all quantum gate operations for instant O(1) lookup at runtime.</p></div></div>
+<pre><code>git clone https://github.com/sansqrit-lang/sansqrit.git
+cd sansqrit
+python3 tools/precompute/generate_blobs.py --verify</code></pre>
+
+<div class="step"><div class="step-num">5</div><div class="step-body"><h4>Verify it works</h4><p>You should see the version info with all packages listed.</p></div></div>
+<pre><code>sansqrit version
+<span class="cm"># Output:
+# Sansqrit v0.1.0
+# Quantum Engine: 3-tier (Dense / Sparse / Chunked)
+# Packages: chemistry, biology, genetics, medical, physics, ml, math</span></code></pre>
+
+<div class="info tip"><strong>Tip</strong> If you see "command not found", run <code>source $HOME/.cargo/env</code> or add <code>export PATH="$HOME/.cargo/bin:$PATH"</code> to your <code>~/.bashrc</code>.</div>
+</section>
+
+<section id="first-program">
+<h2><span class="num">03</span> Your First Program</h2>
+<p>Create a file called <code>hello.sq</code> with any text editor and paste this:</p>
+<pre><code><span class="cm"># hello.sq — Your first quantum program</span>
+<span class="fn">print</span>(<span class="str">"Hello, Quantum World!"</span>)
+
+<span class="kw">simulate</span> {
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(<span class="num">2</span>)
+    <span class="gate">H</span>(q[<span class="num">0</span>])                    <span class="cm"># Put qubit 0 in superposition</span>
+    <span class="gate">CNOT</span>(q[<span class="num">0</span>], q[<span class="num">1</span>])           <span class="cm"># Entangle qubit 1 with qubit 0</span>
+    <span class="kw">let</span> result = <span class="fn">measure_all</span>(q, shots=<span class="num">1000</span>)
+    <span class="fn">print</span>(<span class="str">"Bell state:"</span>, result)
+}</code></pre>
+<p>Run it:</p>
+<pre><code>sansqrit run hello.sq
+<span class="cm"># Output:
+# Hello, Quantum World!
+# Bell state: {"00": 503, "11": 497}</span></code></pre>
+
+<div class="info note"><strong>What just happened?</strong> You created a Bell state — two qubits that are maximally entangled. When you measure them, you always get both-zero or both-one, never a mix. This is a fundamental quantum phenomenon with no classical equivalent.</div>
+</section>
+
+<section id="how-it-works">
+<h2><span class="num">04</span> How Sansqrit Works Under the Hood</h2>
+<p>When you run <code>sansqrit run file.sq</code>, four things happen:</p>
+
+<div class="step"><div class="step-num">1</div><div class="step-body"><h4>Lexer tokenizes your code</h4><p>Breaks your .sq file into tokens: keywords, numbers, strings, operators.</p></div></div>
+<div class="step"><div class="step-num">2</div><div class="step-body"><h4>Parser builds an AST</h4><p>Tokens become a structured Abstract Syntax Tree representing your program.</p></div></div>
+<div class="step"><div class="step-num">3</div><div class="step-body"><h4>Interpreter executes the AST</h4><p>Classical code runs directly. Quantum code is routed to the simulation engine.</p></div></div>
+<div class="step"><div class="step-num">4</div><div class="step-body"><h4>Engine auto-selects tier</h4><p>≤20 qubits → Dense, ≤28 → Sparse, >28 → Chunked (10-qubit shards in parallel).</p></div></div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- LANGUAGE BASICS -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+
+<section id="variables">
+<h2><span class="num">05</span> Variables &amp; Types</h2>
+<p>Use <code>let</code> for mutable variables and <code>const</code> for constants. Types are inferred automatically.</p>
+<pre><code><span class="kw">let</span> n_qubits = <span class="num">10</span>            <span class="cm"># Integer</span>
+<span class="kw">let</span> energy = <span class="num">-1.137275</span>       <span class="cm"># Float (decimal number)</span>
+<span class="kw">let</span> name = <span class="str">"H2O"</span>             <span class="cm"># String (text)</span>
+<span class="kw">let</span> converged = <span class="kw">true</span>         <span class="cm"># Boolean (true or false)</span>
+<span class="kw">let</span> result = <span class="kw">None</span>            <span class="cm"># None (empty / null)</span>
+
+<span class="cm"># Constants — cannot be changed after creation</span>
+<span class="kw">const</span> PLANCK = <span class="num">6.62607015e-34</span>
+<span class="kw">const</span> PI = <span class="num">3.14159265358979</span>
+
+<span class="cm"># Optional type annotations</span>
+<span class="kw">let</span> energy: <span class="type">float</span> = <span class="num">0.0</span>
+<span class="kw">let</span> label: <span class="type">string</span> = <span class="str">"experiment-01"</span>
+
+<span class="cm"># Type conversion</span>
+<span class="kw">let</span> f = <span class="fn">float</span>(<span class="num">10</span>)           <span class="cm"># 10.0</span>
+<span class="kw">let</span> i = <span class="fn">int</span>(<span class="num">3.7</span>)            <span class="cm"># 3 (truncates)</span>
+<span class="kw">let</span> s = <span class="fn">str</span>(<span class="num">-1.137</span>)         <span class="cm"># "-1.137"</span>
+<span class="kw">let</span> b = <span class="fn">bool</span>(<span class="num">0</span>)             <span class="cm"># false</span></code></pre>
+
+<div class="info tip"><strong>Rule of thumb</strong> Use <code>let</code> for everything. Use <code>const</code> only for physical constants or configuration that must never change.</div>
+</section>
+
+<section id="operators">
+<h2><span class="num">06</span> Operators</h2>
+<table>
+<tr><th>Category</th><th>Operators</th><th>Example</th></tr>
+<tr><td>Arithmetic</td><td><code>+ - * / // % **</code></td><td><code>2 ** 10</code> → <code>1024</code></td></tr>
+<tr><td>Comparison</td><td><code>== != < > <= >=</code></td><td><code>3 == 3</code> → <code>true</code></td></tr>
+<tr><td>Logical</td><td><code>and or not</code></td><td><code>true and false</code> → <code>false</code></td></tr>
+<tr><td>Membership</td><td><code>in, not in</code></td><td><code>3 in [1,2,3]</code> → <code>true</code></td></tr>
+<tr><td>Pipeline</td><td><code>|></code></td><td><code>x |> f |> g</code> = <code>g(f(x))</code></td></tr>
+<tr><td>Bitwise</td><td><code>& | ^ << >></code></td><td><code>5 & 3</code> → <code>1</code></td></tr>
+<tr><td>Assignment</td><td><code>= += -= *= /=</code></td><td><code>n += 1</code></td></tr>
+</table>
+</section>
+
+<section id="strings">
+<h2><span class="num">07</span> Strings &amp; F-Strings</h2>
+<pre><code><span class="kw">let</span> mol = <span class="str">"H2O"</span>
+<span class="kw">let</span> atoms = <span class="num">3</span>
+
+<span class="cm"># F-strings: embed variables and expressions inside strings</span>
+<span class="fn">print</span>(<span class="str">f"The molecule {mol} has {atoms} atoms"</span>)
+<span class="fn">print</span>(<span class="str">f"Bond length: {1.5:.3f} Angstrom"</span>)     <span class="cm"># 3 decimals</span>
+<span class="fn">print</span>(<span class="str">f"Energy: {-1.137:.6e} Hartree"</span>)        <span class="cm"># scientific</span>
+
+<span class="cm"># String methods</span>
+<span class="kw">let</span> dna = <span class="str">"ATGCGATCG"</span>
+dna.<span class="fn">len</span>()                    <span class="cm"># 9</span>
+dna.<span class="fn">upper</span>()                  <span class="cm"># "ATGCGATCG"</span>
+dna.<span class="fn">contains</span>(<span class="str">"ATG"</span>)          <span class="cm"># true</span>
+dna.<span class="fn">replace</span>(<span class="str">"T"</span>, <span class="str">"U"</span>)        <span class="cm"># "AUGCGAUCG" (transcription!)</span>
+dna.<span class="fn">split</span>(<span class="str">"G"</span>)               <span class="cm"># ["ATC", "ATC", ""]</span>
+dna[<span class="num">0</span>..<span class="num">3</span>]                    <span class="cm"># "ATG" (slicing)</span></code></pre>
+</section>
+
+<section id="comments">
+<h2><span class="num">08</span> Comments &amp; Documentation</h2>
+<pre><code><span class="cm"># Single-line comment — ignored by the compiler</span>
+
+<span class="cm">## Section comment — appears in generated docs</span>
+
+<span class="cm">/* Multi-line comment
+   spanning several lines */</span>
+
+<span class="cm">/// Function documentation (appears in sansqrit help)</span>
+<span class="cm">/// Computes VQE ground state energy.</span>
+<span class="cm">/// Args:</span>
+<span class="cm">///   molecule: A loaded Molecule object</span>
+<span class="cm">/// Returns: VQEResult</span>
+<span class="kw">fn</span> <span class="fn">compute_vqe</span>(molecule) { <span class="cm">...</span> }</code></pre>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- CONTROL FLOW -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+
+<section id="if-else">
+<h2><span class="num">09</span> If / Else</h2>
+<pre><code><span class="kw">if</span> temp > <span class="num">38.5</span> {
+    <span class="fn">print</span>(<span class="str">"Fever: high"</span>)
+} <span class="kw">else if</span> temp > <span class="num">37.5</span> {
+    <span class="fn">print</span>(<span class="str">"Fever: mild"</span>)
+} <span class="kw">else</span> {
+    <span class="fn">print</span>(<span class="str">"Normal"</span>)
+}
+
+<span class="cm"># Inline ternary expression</span>
+<span class="kw">let</span> label = <span class="str">"pass"</span> <span class="kw">if</span> score >= <span class="num">60</span> <span class="kw">else</span> <span class="str">"fail"</span></code></pre>
+</section>
+
+<section id="for-loops">
+<h2><span class="num">10</span> For Loops</h2>
+<pre><code><span class="cm"># Loop over a range of numbers</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>) { <span class="fn">print</span>(i) }         <span class="cm"># 0 1 2 3 4</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">11</span>) { <span class="fn">print</span>(i) }     <span class="cm"># 1 2 ... 10</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">0</span>, <span class="num">100</span>, <span class="num">10</span>) { <span class="fn">print</span>(i) } <span class="cm"># 0 10 20 ... 90</span>
+
+<span class="cm"># Loop over a list</span>
+<span class="kw">let</span> amino = [<span class="str">"Ala"</span>, <span class="str">"Gly"</span>, <span class="str">"Val"</span>]
+<span class="kw">for</span> aa <span class="kw">in</span> amino { <span class="fn">print</span>(aa) }
+
+<span class="cm"># Loop with index</span>
+<span class="kw">for</span> (i, aa) <span class="kw">in</span> <span class="fn">enumerate</span>(amino) {
+    <span class="fn">print</span>(<span class="str">f"{i}: {aa}"</span>)
+}
+
+<span class="cm"># Loop over dictionary</span>
+<span class="kw">for</span> (sym, mass) <span class="kw">in</span> {<span class="str">"H"</span>: <span class="num">1.008</span>, <span class="str">"C"</span>: <span class="num">12.011</span>}.<span class="fn">items</span>() {
+    <span class="fn">print</span>(<span class="str">f"{sym}: {mass} g/mol"</span>)
+}
+
+<span class="cm"># break and continue</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>) {
+    <span class="kw">if</span> i == <span class="num">3</span> { <span class="kw">continue</span> }   <span class="cm"># skip 3</span>
+    <span class="kw">if</span> i == <span class="num">7</span> { <span class="kw">break</span> }      <span class="cm"># stop at 7</span>
+    <span class="fn">print</span>(i)
+}</code></pre>
+</section>
+
+<section id="while-loops">
+<h2><span class="num">11</span> While Loops</h2>
+<pre><code><span class="cm"># Scientific convergence loop</span>
+<span class="kw">let</span> energy = <span class="num">100.0</span>
+<span class="kw">let</span> tol = <span class="num">1e-8</span>
+<span class="kw">let</span> iter = <span class="num">0</span>
+<span class="kw">while</span> energy > tol {
+    energy = energy * <span class="num">0.5</span>
+    iter += <span class="num">1</span>
+    <span class="kw">if</span> iter > <span class="num">1000</span> { <span class="kw">break</span> }  <span class="cm"># safety exit</span>
+}
+<span class="fn">print</span>(<span class="str">f"Converged in {iter} steps"</span>)
+
+<span class="cm"># Infinite loop with break</span>
+<span class="kw">loop</span> {
+    <span class="kw">let</span> val = <span class="fn">get_next</span>()
+    <span class="kw">if</span> val == <span class="num">-1</span> { <span class="kw">break</span> }
+}</code></pre>
+</section>
+
+<section id="match">
+<h2><span class="num">12</span> Pattern Matching</h2>
+<pre><code><span class="kw">match</span> result {
+    <span class="type">Ok</span>(energy) => <span class="fn">print</span>(<span class="str">f"Energy: {energy:.6f}"</span>),
+    <span class="type">Err</span>(e)     => <span class="fn">print</span>(<span class="str">f"Error: {e.message}"</span>),
+    <span class="kw">None</span>       => <span class="fn">print</span>(<span class="str">"No result"</span>),
+}
+
+<span class="cm"># Match on numbers with ranges</span>
+<span class="kw">match</span> n {
+    <span class="num">1</span>      => <span class="fn">print</span>(<span class="str">"one"</span>),
+    <span class="num">2</span> | <span class="num">3</span>  => <span class="fn">print</span>(<span class="str">"two or three"</span>),
+    <span class="num">4</span>..<span class="num">10</span>  => <span class="fn">print</span>(<span class="str">"between 4 and 10"</span>),
+    _      => <span class="fn">print</span>(<span class="str">"something else"</span>),
+}</code></pre>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- DATA STRUCTURES -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+
+<section id="lists">
+<h2><span class="num">13</span> Lists &amp; Arrays</h2>
+<pre><code><span class="kw">let</span> nums = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>]
+<span class="kw">let</span> matrix = [[<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>], [<span class="num">4</span>,<span class="num">5</span>,<span class="num">6</span>]]   <span class="cm"># 2D array</span>
+
+<span class="cm"># Indexing (zero-based)</span>
+nums[<span class="num">0</span>]       <span class="cm"># 1 (first)</span>
+nums[<span class="num">-1</span>]      <span class="cm"># 5 (last)</span>
+nums[<span class="num">1</span>..<span class="num">4</span>]    <span class="cm"># [2, 3, 4]</span>
+
+<span class="cm"># Modifying</span>
+nums.<span class="fn">append</span>(<span class="num">6</span>)      <span class="cm"># add to end</span>
+nums.<span class="fn">pop</span>()           <span class="cm"># remove last</span>
+nums.<span class="fn">sort</span>()          <span class="cm"># sort ascending</span>
+
+<span class="cm"># Array math</span>
+<span class="fn">sum</span>(nums)            <span class="cm"># 15</span>
+<span class="fn">mean</span>(nums)           <span class="cm"># 3.0</span>
+<span class="fn">max</span>(nums)            <span class="cm"># 5</span>
+<span class="fn">min</span>(nums)            <span class="cm"># 1</span></code></pre>
+</section>
+
+<section id="dicts">
+<h2><span class="num">14</span> Dictionaries</h2>
+<pre><code><span class="kw">let</span> masses = {<span class="str">"H"</span>: <span class="num">1.008</span>, <span class="str">"C"</span>: <span class="num">12.011</span>, <span class="str">"O"</span>: <span class="num">15.999</span>}
+
+masses[<span class="str">"C"</span>]              <span class="cm"># 12.011</span>
+masses.<span class="fn">get</span>(<span class="str">"Fe"</span>, <span class="num">0.0</span>)   <span class="cm"># 0.0 (default if missing)</span>
+<span class="str">"C"</span> <span class="kw">in</span> masses             <span class="cm"># true</span>
+masses[<span class="str">"Fe"</span>] = <span class="num">55.845</span>    <span class="cm"># add new key</span>
+
+<span class="kw">for</span> (sym, m) <span class="kw">in</span> masses.<span class="fn">items</span>() {
+    <span class="fn">print</span>(<span class="str">f"{sym}: {m} g/mol"</span>)
+}</code></pre>
+</section>
+
+<section id="tuples">
+<h2><span class="num">15</span> Tuples</h2>
+<pre><code><span class="kw">let</span> point = (<span class="num">3.0</span>, <span class="num">4.0</span>)
+<span class="kw">let</span> (x, y) = point        <span class="cm"># Unpacking: x=3.0, y=4.0</span>
+
+<span class="cm"># Zip two lists into tuples</span>
+<span class="kw">let</span> syms = [<span class="str">"H"</span>, <span class="str">"C"</span>, <span class="str">"O"</span>]
+<span class="kw">let</span> masses = [<span class="num">1.008</span>, <span class="num">12.011</span>, <span class="num">15.999</span>]
+<span class="kw">let</span> pairs = <span class="fn">zip</span>(syms, masses)
+<span class="cm"># [("H",1.008), ("C",12.011), ("O",15.999)]</span></code></pre>
+</section>
+
+<section id="sets">
+<h2><span class="num">16</span> Sets</h2>
+<pre><code><span class="kw">let</span> s1 = {<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>}
+<span class="kw">let</span> s2 = {<span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>, <span class="num">6</span>}
+
+s1 | s2   <span class="cm"># Union:        {1,2,3,4,5,6}</span>
+s1 & s2   <span class="cm"># Intersection: {3,4}</span>
+s1 - s2   <span class="cm"># Difference:   {1,2}</span>
+s1 ^ s2   <span class="cm"># Symmetric:    {1,2,5,6}</span></code></pre>
+</section>
+
+<section id="comprehensions">
+<h2><span class="num">17</span> Comprehensions</h2>
+<pre><code><span class="cm"># List comprehension</span>
+<span class="kw">let</span> sq = [x*x <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">6</span>)]        <span class="cm"># [1,4,9,16,25]</span>
+<span class="kw">let</span> ev = [x <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>) <span class="kw">if</span> x%<span class="num">2</span>==<span class="num">0</span>] <span class="cm"># [0,2,4,6,8]</span>
+
+<span class="cm"># Dict comprehension</span>
+<span class="kw">let</span> heavy = {k:v <span class="kw">for</span> (k,v) <span class="kw">in</span> masses.<span class="fn">items</span>() <span class="kw">if</span> v > <span class="num">10.0</span>}</code></pre>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- FUNCTIONS -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+
+<section id="functions">
+<h2><span class="num">18</span> Defining Functions</h2>
+<pre><code><span class="cm"># Basic function with type annotations</span>
+<span class="kw">fn</span> <span class="fn">greet</span>(name: <span class="type">string</span>) -> <span class="type">string</span> {
+    <span class="kw">return</span> <span class="str">f"Hello, {name}!"</span>
+}
+
+<span class="cm"># Default parameters</span>
+<span class="kw">fn</span> <span class="fn">run_vqe</span>(molecule, max_iter: <span class="type">int</span> = <span class="num">200</span>, tol: <span class="type">float</span> = <span class="num">1e-6</span>) {
+    <span class="kw">return</span> <span class="fn">vqe</span>(molecule, max_iter=max_iter, tol=tol)
+}
+
+<span class="cm"># Multiple return values</span>
+<span class="kw">fn</span> <span class="fn">statistics</span>(data: <span class="type">list</span>) -> (<span class="type">float</span>, <span class="type">float</span>, <span class="type">float</span>) {
+    <span class="kw">return</span> (<span class="fn">mean</span>(data), <span class="fn">stdev</span>(data), <span class="fn">median</span>(data))
+}
+<span class="kw">let</span> (m, s, med) = <span class="fn">statistics</span>([<span class="num">1.0</span>, <span class="num">2.0</span>, <span class="num">3.0</span>])</code></pre>
+</section>
+
+<section id="lambdas">
+<h2><span class="num">19</span> Lambdas &amp; Closures</h2>
+<pre><code><span class="cm"># Lambda (anonymous function)</span>
+<span class="kw">let</span> square = <span class="kw">fn</span>(x) => x * x
+square(<span class="num">5</span>)  <span class="cm"># 25</span>
+
+<span class="cm"># Higher-order functions</span>
+<span class="kw">let</span> squares = <span class="fn">map</span>(<span class="kw">fn</span>(x) => x*x, [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>])     <span class="cm"># [1,4,9]</span>
+<span class="kw">let</span> evens = <span class="fn">filter</span>(<span class="kw">fn</span>(x) => x%<span class="num">2</span>==<span class="num">0</span>, [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>]) <span class="cm"># [2,4]</span>
+<span class="kw">let</span> total = <span class="fn">reduce</span>(<span class="kw">fn</span>(a,b) => a+b, [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>], <span class="num">0</span>)  <span class="cm"># 6</span>
+
+<span class="cm"># Closure — captures outer variable</span>
+<span class="kw">fn</span> <span class="fn">make_multiplier</span>(factor: <span class="type">float</span>) -> <span class="type">function</span> {
+    <span class="kw">return</span> <span class="kw">fn</span>(x) => x * factor
+}
+<span class="kw">let</span> double = <span class="fn">make_multiplier</span>(<span class="num">2.0</span>)
+double(<span class="num">5.0</span>)  <span class="cm"># 10.0</span></code></pre>
+</section>
+
+<section id="pipeline">
+<h2><span class="num">20</span> Pipeline Operator</h2>
+<pre><code><span class="cm"># The |> operator passes the left value as the first argument to the right function</span>
+<span class="cm"># x |> f |> g  is equivalent to  g(f(x))</span>
+
+<span class="kw">let</span> result = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>,<span class="num">6</span>,<span class="num">7</span>,<span class="num">8</span>,<span class="num">9</span>,<span class="num">10</span>]
+    |> <span class="fn">filter</span>(<span class="kw">fn</span>(x) => x%<span class="num">2</span>==<span class="num">0</span>)    <span class="cm"># keep evens: [2,4,6,8,10]</span>
+    |> <span class="fn">map</span>(<span class="kw">fn</span>(x) => x*x)          <span class="cm"># square:     [4,16,36,64,100]</span>
+    |> <span class="fn">reduce</span>(<span class="kw">fn</span>(a,b) => a+b)    <span class="cm"># sum:        220</span></code></pre>
+</section>
+
+<section id="decorators">
+<h2><span class="num">21</span> Decorators</h2>
+<pre><code><span class="cm"># @timer — automatically prints how long the function takes</span>
+<span class="kw">@timer</span>
+<span class="kw">fn</span> <span class="fn">slow_calc</span>(n: <span class="type">int</span>) -> <span class="type">float</span> {
+    <span class="kw">return</span> <span class="fn">sum</span>([<span class="fn">sqrt</span>(x) <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(n)])
+}
+<span class="cm"># prints: "slow_calc took 0.023s"</span>
+
+<span class="cm"># @memoize — caches results for repeated calls</span>
+<span class="kw">@memoize</span>
+<span class="kw">fn</span> <span class="fn">fetch_gene</span>(gene_id: <span class="type">string</span>) -> <span class="type">dict</span> {
+    <span class="kw">return</span> <span class="fn">query_database</span>(gene_id)
+}</code></pre>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- OOP -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+
+<section id="classes">
+<h2><span class="num">22</span> Classes &amp; Objects</h2>
+<pre><code><span class="kw">class</span> <span class="type">Molecule</span> {
+    name: <span class="type">string</span>,
+    atoms: <span class="type">list</span>,
+    charge: <span class="type">int</span> = <span class="num">0</span>,
+
+    <span class="kw">fn</span> <span class="fn">new</span>(name: <span class="type">string</span>, atoms: <span class="type">list</span>) -> <span class="type">Molecule</span> {
+        <span class="kw">return</span> <span class="type">Molecule</span> { name: name, atoms: atoms }
+    }
+
+    <span class="kw">fn</span> <span class="fn">n_atoms</span>(self) -> <span class="type">int</span> { <span class="kw">return</span> <span class="fn">len</span>(self.atoms) }
+
+    <span class="kw">fn</span> <span class="fn">__str__</span>(self) -> <span class="type">string</span> {
+        <span class="kw">return</span> <span class="str">f"Molecule({self.name})"</span>
+    }
+}
+
+<span class="kw">let</span> water = <span class="type">Molecule</span>::<span class="fn">new</span>(<span class="str">"Water"</span>, [<span class="str">"H"</span>, <span class="str">"H"</span>, <span class="str">"O"</span>])
+<span class="fn">print</span>(water.<span class="fn">n_atoms</span>())  <span class="cm"># 3</span></code></pre>
+</section>
+
+<section id="inheritance">
+<h2><span class="num">23</span> Inheritance</h2>
+<pre><code><span class="kw">class</span> <span class="type">Drug</span> <span class="kw">extends</span> <span class="type">Molecule</span> {
+    target: <span class="type">string</span> = <span class="str">"unknown"</span>,
+    ic50: <span class="type">float</span> = <span class="num">0.0</span>,
+
+    <span class="kw">fn</span> <span class="fn">passes_lipinski</span>(self) -> <span class="type">bool</span> {
+        <span class="kw">return</span> self._mass <= <span class="num">500.0</span> <span class="kw">and</span> self.<span class="fn">hbd</span>() <= <span class="num">5</span>
+    }
+}</code></pre>
+</section>
+
+<section id="structs">
+<h2><span class="num">24</span> Structs</h2>
+<pre><code><span class="kw">struct</span> <span class="type">Atom</span> {
+    symbol: <span class="type">string</span>,
+    number: <span class="type">int</span>,
+    mass: <span class="type">float</span>,
+    charge: <span class="type">float</span> = <span class="num">0.0</span>,
+}
+
+<span class="kw">let</span> h = <span class="type">Atom</span> { symbol: <span class="str">"H"</span>, number: <span class="num">1</span>, mass: <span class="num">1.008</span> }</code></pre>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- QUANTUM COMPUTING -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+
+<section id="qubits">
+<h2><span class="num">25</span> Quantum Registers</h2>
+<p>All quantum code goes inside a <code>simulate { }</code> block. Create qubits with <code>quantum_register(n)</code>.</p>
+<pre><code><span class="kw">simulate</span> {
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(<span class="num">4</span>)   <span class="cm"># 4 qubits, all start as |0⟩</span>
+    <span class="gate">H</span>(q[<span class="num">0</span>])                       <span class="cm"># apply gate to qubit 0</span>
+    <span class="gate">X</span>(q[<span class="num">3</span>])                       <span class="cm"># apply gate to qubit 3</span>
+    <span class="kw">let</span> bit = <span class="fn">measure</span>(q[<span class="num">0</span>])      <span class="cm"># 0 or 1</span>
+}
+
+<span class="cm"># Force a specific engine</span>
+<span class="kw">simulate</span>(engine=<span class="str">"chunked"</span>) {
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(<span class="num">100</span>)  <span class="cm"># 100 qubits! 10 chunks of 10</span>
+}</code></pre>
+</section>
+
+<section id="gates-single">
+<h2><span class="num">26</span> Single-Qubit Gates</h2>
+<table>
+<tr><th>Gate</th><th>Syntax</th><th>What It Does</th><th>Use Case</th></tr>
+<tr><td>Identity</td><td><code>I(q[0])</code></td><td>Does nothing</td><td>Placeholder</td></tr>
+<tr><td>Pauli X</td><td><code>X(q[0])</code></td><td>Flips |0⟩ ↔ |1⟩</td><td>Bit flip, init</td></tr>
+<tr><td>Pauli Y</td><td><code>Y(q[0])</code></td><td>Rotation + phase</td><td>Rotation</td></tr>
+<tr><td>Pauli Z</td><td><code>Z(q[0])</code></td><td>Phase flip of |1⟩</td><td>Phase oracle</td></tr>
+<tr><td>Hadamard</td><td><code>H(q[0])</code></td><td>Creates superposition</td><td>Most common!</td></tr>
+<tr><td>S gate</td><td><code>S(q[0])</code></td><td>Phase π/2</td><td>Phase rotation</td></tr>
+<tr><td>T gate</td><td><code>T(q[0])</code></td><td>Phase π/4</td><td>Clifford+T</td></tr>
+<tr><td>√X</td><td><code>SX(q[0])</code></td><td>Square root of X</td><td>IBM native</td></tr>
+<tr><td>Rx(θ)</td><td><code>Rx(q[0], PI/4)</code></td><td>Rotate about X</td><td>VQE ansatz</td></tr>
+<tr><td>Ry(θ)</td><td><code>Ry(q[0], PI/2)</code></td><td>Rotate about Y</td><td>VQE (most used)</td></tr>
+<tr><td>Rz(θ)</td><td><code>Rz(q[0], PI/3)</code></td><td>Rotate about Z</td><td>Phase gradient</td></tr>
+<tr><td>U3</td><td><code>U3(q[0],θ,φ,λ)</code></td><td>General unitary</td><td>Any gate</td></tr>
+</table>
+</section>
+
+<section id="gates-two">
+<h2><span class="num">27</span> Two-Qubit Gates</h2>
+<table>
+<tr><th>Gate</th><th>Syntax</th><th>What It Does</th></tr>
+<tr><td>CNOT</td><td><code>CNOT(q[0], q[1])</code></td><td>Flip target if control=|1⟩ (most common)</td></tr>
+<tr><td>CZ</td><td><code>CZ(q[0], q[1])</code></td><td>Phase flip when both=|1⟩</td></tr>
+<tr><td>SWAP</td><td><code>SWAP(q[0], q[1])</code></td><td>Exchange two qubits</td></tr>
+<tr><td>iSWAP</td><td><code>iSWAP(q[0], q[1])</code></td><td>SWAP with phase factor</td></tr>
+<tr><td>CRz(θ)</td><td><code>CRz(q[0], q[1], PI/2)</code></td><td>Controlled Z rotation</td></tr>
+<tr><td>CP(θ)</td><td><code>CP(q[0], q[1], PI/4)</code></td><td>Controlled phase</td></tr>
+<tr><td>RZZ(θ)</td><td><code>RZZ(q[0], q[1], PI/2)</code></td><td>ZZ Ising coupling (QAOA)</td></tr>
+</table>
+</section>
+
+<section id="gates-three">
+<h2><span class="num">28</span> Three-Qubit Gates</h2>
+<pre><code><span class="cm"># Toffoli (CCX) — flip target if BOTH controls = |1⟩</span>
+<span class="gate">Toffoli</span>(q[<span class="num">0</span>], q[<span class="num">1</span>], q[<span class="num">2</span>])
+
+<span class="cm"># Fredkin (CSWAP) — swap q[1] and q[2] if control = |1⟩</span>
+<span class="gate">Fredkin</span>(q[<span class="num">0</span>], q[<span class="num">1</span>], q[<span class="num">2</span>])</code></pre>
+</section>
+
+<section id="measurement">
+<h2><span class="num">29</span> Measurement</h2>
+<pre><code><span class="kw">simulate</span> {
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(<span class="num">4</span>)
+    <span class="gate">H</span>(q[<span class="num">0</span>]); <span class="gate">CNOT</span>(q[<span class="num">0</span>], q[<span class="num">1</span>])
+
+    <span class="cm"># Single qubit (collapses state) → 0 or 1</span>
+    <span class="kw">let</span> bit = <span class="fn">measure</span>(q[<span class="num">0</span>])
+
+    <span class="cm"># All qubits with many shots → histogram</span>
+    <span class="kw">let</span> hist = <span class="fn">measure_all</span>(q, shots=<span class="num">10000</span>)
+
+    <span class="cm"># Non-destructive queries</span>
+    <span class="kw">let</span> probs = <span class="fn">probabilities</span>(q)
+    <span class="kw">let</span> ez = <span class="fn">expectation_z</span>(q[<span class="num">0</span>])     <span class="cm"># ⟨Z⟩ = P(0) − P(1)</span>
+    <span class="kw">let</span> ezz = <span class="fn">expectation_zz</span>(q[<span class="num">0</span>], q[<span class="num">1</span>])
+    <span class="kw">let</span> nnz = <span class="fn">engine_nnz</span>()           <span class="cm"># non-zero amplitudes</span>
+}</code></pre>
+</section>
+
+<section id="engines">
+<h2><span class="num">30</span> Engine Tiers</h2>
+<table>
+<tr><th>Engine</th><th>Auto-selected</th><th>Memory (30q)</th><th>Speed</th></tr>
+<tr><td><strong>Dense</strong></td><td>≤ 20 qubits</td><td>16 GB</td><td>Fastest for small</td></tr>
+<tr><td><strong>Sparse</strong></td><td>21–28 qubits</td><td>~100 bytes for GHZ!</td><td>Huge win for sparse</td></tr>
+<tr><td><strong>Chunked</strong></td><td>> 28 qubits</td><td>10-qubit chunks × nnz</td><td>Parallel, unlimited</td></tr>
+</table>
+<div class="info note"><strong>You never need to choose.</strong> Sansqrit auto-detects the qubit count and picks. Or force one: <code>simulate(engine="sparse") { ... }</code></div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- ADVANCED -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+
+<section id="algorithms">
+<h2><span class="num">31</span> Built-in Quantum Algorithms</h2>
+<pre><code><span class="cm"># Grover's Search — find item in O(√N) queries</span>
+<span class="kw">let</span> result = <span class="fn">grover_search</span>(n_qubits=<span class="num">7</span>, target=<span class="num">42</span>)
+
+<span class="cm"># Shor's Algorithm — factor integers</span>
+<span class="kw">let</span> factors = <span class="fn">shor_factor</span>(<span class="num">15</span>)   <span class="cm"># [3, 5]</span>
+
+<span class="cm"># Quantum Phase Estimation</span>
+<span class="kw">let</span> phase = <span class="fn">estimate_phase</span>(unitary, n_bits=<span class="num">8</span>)
+
+<span class="cm"># HHL — solve Ax=b on quantum hardware</span>
+<span class="kw">let</span> x = <span class="fn">hhl_solve</span>(A, b)
+
+<span class="cm"># Bernstein-Vazirani — find hidden bitstring in ONE query</span>
+<span class="kw">let</span> found = <span class="fn">bernstein_vazirani</span>(n_bits=<span class="num">5</span>, oracle_secret=[<span class="num">1</span>,<span class="num">0</span>,<span class="num">1</span>,<span class="num">1</span>,<span class="num">0</span>])
+
+<span class="cm"># QFT and inverse QFT</span>
+<span class="fn">qft</span>(q)
+<span class="fn">iqft</span>(q)</code></pre>
+</section>
+
+<section id="hardware">
+<h2><span class="num">32</span> Hardware Export</h2>
+<pre><code><span class="cm"># Export circuit to real quantum hardware formats</span>
+<span class="kw">circuit</span> <span class="type">MyCircuit</span> {
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(<span class="num">3</span>)
+    <span class="gate">H</span>(q[<span class="num">0</span>]); <span class="gate">CNOT</span>(q[<span class="num">0</span>], q[<span class="num">1</span>]); <span class="gate">CNOT</span>(q[<span class="num">1</span>], q[<span class="num">2</span>])
+    <span class="fn">measure_all</span>(q)
+}
+
+<span class="type">MyCircuit</span>.<span class="fn">export_qasm</span>(<span class="str">"circuit.qasm"</span>)       <span class="cm"># OpenQASM 2.0</span>
+<span class="type">MyCircuit</span>.<span class="fn">export_ibm</span>(<span class="str">"circuit_ibm.json"</span>)   <span class="cm"># IBM Quantum</span>
+<span class="type">MyCircuit</span>.<span class="fn">export_ionq</span>(<span class="str">"circuit_ionq.json"</span>) <span class="cm"># IonQ</span>
+<span class="type">MyCircuit</span>.<span class="fn">export_cirq</span>(<span class="str">"circuit.py"</span>)        <span class="cm"># Google Cirq</span>
+<span class="type">MyCircuit</span>.<span class="fn">export_braket</span>(<span class="str">"circuit.py"</span>)      <span class="cm"># AWS Braket</span></code></pre>
+
+<p>Or from the command line:</p>
+<pre><code>sansqrit qasm hello.sq --format ibm
+sansqrit qasm hello.sq --format ionq
+sansqrit qasm hello.sq --format braket</code></pre>
+</section>
+
+<section id="packages">
+<h2><span class="num">33</span> Science Packages</h2>
+<table>
+<tr><th>Package</th><th>Import</th><th>Key Functions</th></tr>
+<tr><td>Chemistry</td><td><code>import chemistry</code></td><td><code>vqe()</code>, <code>potential_energy_surface()</code>, <code>trotter_evolve()</code></td></tr>
+<tr><td>Biology</td><td><code>import biology</code></td><td><code>transcribe()</code>, <code>translate()</code>, <code>fold_protein()</code></td></tr>
+<tr><td>Medical</td><td><code>import medical</code></td><td><code>screen_drugs()</code>, <code>design_vaccine()</code></td></tr>
+<tr><td>Physics</td><td><code>import physics</code></td><td><code>ising_model()</code>, <code>solve_maxcut()</code></td></tr>
+<tr><td>Genetics</td><td><code>import genetics</code></td><td><code>design_crispr_guides()</code>, <code>run_gwas()</code></td></tr>
+<tr><td>ML</td><td><code>import ml</code></td><td><code>quantum_neural_net()</code>, <code>quantum_svm()</code></td></tr>
+<tr><td>Math</td><td><code>import math</code></td><td><code>shor_factor()</code>, <code>grover_search()</code>, <code>hhl_solve()</code></td></tr>
+</table>
+</section>
+
+<section id="error-handling">
+<h2><span class="num">34</span> Error Handling</h2>
+<pre><code><span class="kw">try</span> {
+    <span class="kw">let</span> result = <span class="fn">run_vqe</span>(molecule)
+} <span class="kw">catch</span> <span class="type">ConvergenceError</span> <span class="kw">as</span> e {
+    <span class="fn">print</span>(<span class="str">f"VQE failed: {e.message}"</span>)
+} <span class="kw">catch</span> _ {
+    <span class="fn">print</span>(<span class="str">"Unexpected error"</span>)
+} <span class="kw">finally</span> {
+    <span class="fn">cleanup</span>()
+}
+
+<span class="cm"># Raise your own exceptions</span>
+<span class="kw">if</span> t < <span class="num">-273.15</span> {
+    <span class="kw">raise</span> <span class="type">ValueError</span>(<span class="str">"Below absolute zero!"</span>)
+}</code></pre>
+</section>
+
+<section id="file-io">
+<h2><span class="num">35</span> File I/O</h2>
+<pre><code><span class="cm"># CSV</span>
+<span class="kw">let</span> df = <span class="fn">read_csv</span>(<span class="str">"data.csv"</span>)
+<span class="fn">write_csv</span>(<span class="str">"results.csv"</span>, [{<span class="str">"mol"</span>:<span class="str">"H2"</span>, <span class="str">"energy"</span>:<span class="num">-1.137</span>}])
+
+<span class="cm"># JSON</span>
+<span class="kw">let</span> config = <span class="fn">read_json</span>(<span class="str">"config.json"</span>)
+<span class="fn">write_json</span>(<span class="str">"results.json"</span>, {<span class="str">"energy"</span>: <span class="num">-1.137</span>}, indent=<span class="num">2</span>)
+
+<span class="cm"># Text files</span>
+<span class="fn">write_file</span>(<span class="str">"notes.txt"</span>, <span class="str">"Experiment complete"</span>)
+<span class="kw">let</span> text = <span class="fn">read_file</span>(<span class="str">"notes.txt"</span>)
+
+<span class="cm"># Logging</span>
+<span class="fn">set_log_level</span>(<span class="str">"DEBUG"</span>)
+<span class="fn">log_info</span>(<span class="str">"Starting VQE calculation"</span>)
+<span class="fn">log_warn</span>(<span class="str">"Basis set may be insufficient"</span>)</code></pre>
+</section>
+
+<section id="extending">
+<h2><span class="num">36</span> Extending Sansqrit — 3 Steps</h2>
+<div class="info note"><strong>Safety guarantee:</strong> You never modify existing code. Every extension goes in a NEW file. It is impossible to break existing functionality.</div>
+
+<div class="step"><div class="step-num">1</div><div class="step-body"><h4>Create a new .rs file with your functions</h4><p>Write standard Rust code with documentation.</p></div></div>
+<pre><code><span class="cm">// crates/sansqrit-stdlib/src/climate.rs</span>
+<span class="kw">pub fn</span> <span class="fn">co2_forcing</span>(co2_ppm: <span class="type">f64</span>) -> <span class="type">f64</span> {
+    <span class="num">5.35</span> * (co2_ppm / <span class="num">280.0</span>).<span class="fn">ln</span>()
+}</code></pre>
+
+<div class="step"><div class="step-num">2</div><div class="step-body"><h4>Add ONE line to lib.rs</h4><p>Nothing else changes.</p></div></div>
+<pre><code><span class="kw">pub mod</span> climate; <span class="cm">// ← only change</span></code></pre>
+
+<div class="step"><div class="step-num">3</div><div class="step-body"><h4>Use in your .sq program</h4><p>Import and call your new functions.</p></div></div>
+<pre><code><span class="kw">import</span> stdlib.climate <span class="kw">as</span> climate
+<span class="kw">let</span> forcing = climate.<span class="fn">co2_forcing</span>(<span class="num">420.0</span>)
+<span class="fn">print</span>(<span class="str">f"Forcing: {forcing:.3f} W/m²"</span>)  <span class="cm"># 2.240 W/m²</span></code></pre>
+</section>
+
+</main>
+</div>
+
+<script>
+// Sidebar active link tracking
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+      const link = document.querySelector(`.sidebar a[href="#${e.target.id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { rootMargin: '-80px 0px -60% 0px' });
+document.querySelectorAll('section[id]').forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

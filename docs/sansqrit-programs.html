@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sansqrit — 120+ Example Programs</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0e12;--bg2:#12151b;--bg3:#181c24;--card:#1a1e27;--border:#252a35;--text:#c8cdd8;--text2:#8891a0;--h:#e8ecf2;--accent:#d4a853;--accent2:#e8c97a;--accent-glow:rgba(212,168,83,0.15);--green:#5ccf7f;--blue:#5b9cf5;--red:#e05656;--purple:#b58cf5;--cyan:#5bcfcf;--code-bg:#0f1218;--sidebar-w:260px;--font:'DM Sans',sans-serif;--mono:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.7;font-size:14px}
+::selection{background:var(--accent);color:var(--bg)}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+.top-bar{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(12,14,18,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;z-index:1000;gap:14px}
+.top-bar .logo{font-family:var(--mono);font-weight:700;font-size:16px;color:var(--accent);letter-spacing:1px}
+.top-bar .logo span{color:var(--text2);font-weight:400;font-size:12px;margin-left:8px}
+.top-bar nav{margin-left:auto;display:flex;gap:18px}
+.top-bar nav a{color:var(--text2);text-decoration:none;font-size:12px;font-weight:500;transition:color .2s}
+.top-bar nav a:hover,.top-bar nav a.active{color:var(--accent)}
+.top-bar .count{background:var(--accent);color:var(--bg);font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:4px}
+
+.layout{display:flex;margin-top:52px}
+
+.sidebar{position:fixed;top:52px;left:0;bottom:0;width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;padding:14px 0;z-index:100;font-size:12px}
+.sidebar h4{padding:10px 16px 3px;font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--accent);font-weight:700;margin-top:8px;display:flex;align-items:center;gap:6px}
+.sidebar h4:first-child{margin-top:0}
+.sidebar h4 .cnt{background:var(--bg3);color:var(--text2);font-size:9px;padding:1px 5px;border-radius:8px;font-weight:600}
+.sidebar a{display:block;padding:3px 16px 3px 22px;color:var(--text2);text-decoration:none;transition:all .12s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sidebar a:hover{color:var(--h);background:var(--accent-glow);border-left-color:var(--accent)}
+
+.main{margin-left:var(--sidebar-w);flex:1;padding:28px 36px 60px;max-width:860px}
+
+.hero{margin-bottom:36px;padding:32px;background:linear-gradient(135deg,var(--card),var(--bg3));border:1px solid var(--border);border-radius:14px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-40%;right:-15%;width:250px;height:250px;background:radial-gradient(circle,var(--accent-glow),transparent);pointer-events:none}
+.hero h1{font-family:'Playfair Display',serif;font-size:30px;font-weight:800;color:var(--h);margin-bottom:8px}
+.hero h1 span{color:var(--accent)}
+.hero p{font-size:14px;color:var(--text2);max-width:580px}
+
+.cat{margin-bottom:40px}
+.cat-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--h);padding-bottom:10px;border-bottom:1px solid var(--border);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.cat-title .badge{font-size:10px;background:var(--accent-glow);color:var(--accent);padding:3px 10px;border-radius:12px;font-family:var(--font);font-weight:600;letter-spacing:.5px}
+
+.prog{margin-bottom:20px;border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color .2s}
+.prog:hover{border-color:rgba(212,168,83,0.3)}
+.prog-head{display:flex;align-items:center;padding:10px 16px;background:var(--card);cursor:pointer;gap:10px;user-select:none}
+.prog-head .num{font-family:var(--mono);font-size:11px;color:var(--accent);font-weight:700;min-width:28px}
+.prog-head .title{font-weight:600;font-size:13px;color:var(--h);flex:1}
+.prog-head .tags{display:flex;gap:4px}
+.prog-head .tag{font-size:9px;padding:2px 7px;border-radius:6px;font-weight:600;letter-spacing:.3px}
+.tag-basic{background:rgba(91,156,245,0.12);color:var(--blue)}
+.tag-quantum{background:rgba(181,140,245,0.12);color:var(--purple)}
+.tag-chem{background:rgba(92,207,127,0.12);color:var(--green)}
+.tag-bio{background:rgba(91,207,207,0.12);color:var(--cyan)}
+.tag-phys{background:rgba(224,86,86,0.12);color:var(--red)}
+.tag-ml{background:rgba(212,168,83,0.12);color:var(--accent)}
+.tag-med{background:rgba(224,140,86,0.12);color:#e08c56}
+.tag-gen{background:rgba(181,207,91,0.12);color:#b5cf5b}
+.tag-math{background:rgba(245,181,140,0.12);color:#f5b58c}
+.tag-io{background:rgba(140,181,245,0.12);color:#8cb5f5}
+.prog-head .arrow{color:var(--text2);font-size:14px;transition:transform .2s}
+.prog.open .arrow{transform:rotate(180deg)}
+
+.prog-body{display:none;border-top:1px solid var(--border)}
+.prog.open .prog-body{display:block}
+.prog-desc{padding:12px 16px 4px;font-size:12px;color:var(--text2)}
+
+pre{background:var(--code-bg);margin:0;padding:14px 16px;overflow-x:auto;font-family:var(--mono);font-size:12px;line-height:1.65;color:#c8cdd8}
+
+.kw{color:#c678dd}.str{color:#98c379}.num{color:#d19a66}.cm{color:#5c6370;font-style:italic}.fn{color:#61afef}.op{color:#56b6c2}.type{color:#e5c07b}.gate{color:#e06c75;font-weight:600}
+
+@media(max-width:900px){.sidebar{display:none}.main{margin-left:0;padding:16px 14px}}
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <div class="logo">SANSQRIT <span>Program Library</span></div>
+  <nav>
+    <a href="dsl-syntax.html">Syntax Guide</a>
+    <a href="sansqrit-programs.html" class="active">Programs <span class="count">120</span></a>
+    <a href="https://github.com/sansqrit-lang/sansqrit">GitHub</a>
+  </nav>
+</div>
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <h4>Basics <span class="cnt">15</span></h4>
+  <a href="#basics">All Basic Programs</a>
+  <h4>Control Flow <span class="cnt">10</span></h4>
+  <a href="#control">All Control Flow</a>
+  <h4>Data Structures <span class="cnt">10</span></h4>
+  <a href="#data">All Data Structures</a>
+  <h4>Functions <span class="cnt">8</span></h4>
+  <a href="#functions">All Functions</a>
+  <h4>OOP <span class="cnt">5</span></h4>
+  <a href="#oop">All OOP</a>
+  <h4>Quantum Basics <span class="cnt">12</span></h4>
+  <a href="#qbasics">All Quantum Basics</a>
+  <h4>Quantum Algorithms <span class="cnt">10</span></h4>
+  <a href="#qalgo">All Algorithms</a>
+  <h4>Chemistry <span class="cnt">8</span></h4>
+  <a href="#chem">All Chemistry</a>
+  <h4>Biology <span class="cnt">6</span></h4>
+  <a href="#bio">All Biology</a>
+  <h4>Medical <span class="cnt">5</span></h4>
+  <a href="#med">All Medical</a>
+  <h4>Physics <span class="cnt">8</span></h4>
+  <a href="#phys">All Physics</a>
+  <h4>Genetics <span class="cnt">5</span></h4>
+  <a href="#gen">All Genetics</a>
+  <h4>Machine Learning <span class="cnt">5</span></h4>
+  <a href="#ml">All ML</a>
+  <h4>Large Scale <span class="cnt">5</span></h4>
+  <a href="#large">Large Scale (100q+)</a>
+  <h4>File I/O <span class="cnt">5</span></h4>
+  <a href="#fileio">All File I/O</a>
+  <h4>Hardware Export <span class="cnt">3</span></h4>
+  <a href="#hardware">All Hardware Export</a>
+</aside>
+
+<main class="main">
+<div class="hero">
+  <h1>120+ <span>Sansqrit</span> Programs</h1>
+  <p>Complete runnable examples across every domain — from basics to 100-qubit drug discovery. Click any program to expand its code.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div class="cat" id="basics"><div class="cat-title">Language Basics <span class="badge">15 programs</span></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#001</span><span class="title">Hello World</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><div class="prog-desc">The simplest possible program — prints text to the screen.</div><pre><code><span class="fn">print</span>(<span class="str">"Hello, Quantum World!"</span>)</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#002</span><span class="title">Variables and Types</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> n = <span class="num">10</span>                     <span class="cm"># Integer</span>
+<span class="kw">let</span> energy = <span class="num">-1.137275</span>          <span class="cm"># Float</span>
+<span class="kw">let</span> name = <span class="str">"H2O"</span>               <span class="cm"># String</span>
+<span class="kw">let</span> converged = <span class="kw">true</span>            <span class="cm"># Boolean</span>
+<span class="kw">let</span> result = <span class="kw">None</span>               <span class="cm"># None</span>
+<span class="kw">const</span> PI = <span class="num">3.14159265358979</span>    <span class="cm"># Immutable</span>
+<span class="fn">print</span>(<span class="str">f"Energy: {energy}, Molecule: {name}"</span>)</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#003</span><span class="title">Arithmetic Operations</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> a = <span class="num">10</span>
+<span class="kw">let</span> b = <span class="num">3</span>
+<span class="fn">print</span>(<span class="str">f"Add: {a+b}"</span>)        <span class="cm"># 13</span>
+<span class="fn">print</span>(<span class="str">f"Sub: {a-b}"</span>)        <span class="cm"># 7</span>
+<span class="fn">print</span>(<span class="str">f"Mul: {a*b}"</span>)        <span class="cm"># 30</span>
+<span class="fn">print</span>(<span class="str">f"Div: {a/b}"</span>)        <span class="cm"># 3.333...</span>
+<span class="fn">print</span>(<span class="str">f"IntDiv: {a//b}"</span>)     <span class="cm"># 3</span>
+<span class="fn">print</span>(<span class="str">f"Mod: {a%b}"</span>)        <span class="cm"># 1</span>
+<span class="fn">print</span>(<span class="str">f"Power: {2**10}"</span>)    <span class="cm"># 1024</span></code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#004</span><span class="title">String Operations</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> dna = <span class="str">"ATGCGATCGATCG"</span>
+<span class="fn">print</span>(dna.<span class="fn">len</span>())                 <span class="cm"># 13</span>
+<span class="fn">print</span>(dna.<span class="fn">contains</span>(<span class="str">"ATG"</span>))      <span class="cm"># true</span>
+<span class="fn">print</span>(dna.<span class="fn">replace</span>(<span class="str">"T"</span>, <span class="str">"U"</span>))    <span class="cm"># AUGCGAUCGAUCG</span>
+<span class="fn">print</span>(dna[<span class="num">0</span>..<span class="num">3</span>])                <span class="cm"># ATG (start codon)</span>
+<span class="fn">print</span>(dna.<span class="fn">upper</span>())               <span class="cm"># ATGCGATCGATCG</span>
+<span class="kw">let</span> parts = dna.<span class="fn">split</span>(<span class="str">"G"</span>)
+<span class="fn">print</span>(parts.<span class="fn">join</span>(<span class="str">"-"</span>))           <span class="cm"># ATC-ATC-ATC-</span></code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#005</span><span class="title">Boolean Logic</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> a = <span class="kw">true</span>
+<span class="kw">let</span> b = <span class="kw">false</span>
+<span class="fn">print</span>(a <span class="kw">and</span> b)     <span class="cm"># false</span>
+<span class="fn">print</span>(a <span class="kw">or</span> b)      <span class="cm"># true</span>
+<span class="fn">print</span>(<span class="kw">not</span> a)       <span class="cm"># false</span>
+<span class="fn">print</span>(<span class="num">3</span> == <span class="num">3</span>)      <span class="cm"># true</span>
+<span class="fn">print</span>(<span class="num">5</span> > <span class="num">3</span>)       <span class="cm"># true</span>
+<span class="fn">print</span>(<span class="num">3</span> <span class="kw">in</span> [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>]) <span class="cm"># true</span></code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#006</span><span class="title">Type Conversion</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="fn">print</span>(<span class="fn">float</span>(<span class="num">10</span>))    <span class="cm"># 10.0</span>
+<span class="fn">print</span>(<span class="fn">int</span>(<span class="num">3.7</span>))     <span class="cm"># 3</span>
+<span class="fn">print</span>(<span class="fn">str</span>(<span class="num">-1.137</span>))  <span class="cm"># "-1.137"</span>
+<span class="fn">print</span>(<span class="fn">bool</span>(<span class="num">0</span>))      <span class="cm"># false</span>
+<span class="fn">print</span>(<span class="fn">bool</span>(<span class="num">1</span>))      <span class="cm"># true</span>
+<span class="fn">print</span>(<span class="fn">type</span>(<span class="num">3.14</span>))   <span class="cm"># "float"</span></code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#007</span><span class="title">Physical Constants</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="fn">print</span>(<span class="str">f"π = {PI:.10f}"</span>)
+<span class="fn">print</span>(<span class="str">f"e = {E:.10f}"</span>)
+<span class="fn">print</span>(<span class="str">f"Planck: {PLANCK:.6e} J·s"</span>)
+<span class="fn">print</span>(<span class="str">f"Boltzmann: {BOLTZMANN:.6e} J/K"</span>)
+<span class="fn">print</span>(<span class="str">f"Avogadro: {AVOGADRO:.6e} /mol"</span>)</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#008</span><span class="title">F-String Formatting</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> mol = <span class="str">"H2O"</span>
+<span class="kw">let</span> energy = <span class="num">-76.4</span>
+<span class="fn">print</span>(<span class="str">f"{mol} energy: {energy:.6f} Ha"</span>)
+<span class="fn">print</span>(<span class="str">f"Scientific: {energy:.3e}"</span>)
+<span class="fn">print</span>(<span class="str">f"Padded: {mol:>10}"</span>)
+<span class="fn">print</span>(<span class="str">f"Percentage: {0.956:.1%}"</span>)</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#009</span><span class="title">Scientific Notation</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> avogadro = <span class="num">6.022e23</span>
+<span class="kw">let</span> e_charge = <span class="num">1.602e-19</span>
+<span class="kw">let</span> planck = <span class="num">6.626e-34</span>
+<span class="fn">print</span>(<span class="str">f"Avogadro: {avogadro}"</span>)
+<span class="fn">print</span>(<span class="str">f"Electron charge: {e_charge} C"</span>)
+<span class="fn">print</span>(<span class="str">f"Photon energy at 500nm: {planck * 3e8 / 500e-9:.3e} J"</span>)</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#010</span><span class="title">Math Functions</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="fn">print</span>(<span class="fn">sqrt</span>(<span class="num">144</span>))        <span class="cm"># 12.0</span>
+<span class="fn">print</span>(<span class="fn">abs</span>(<span class="num">-5.5</span>))        <span class="cm"># 5.5</span>
+<span class="fn">print</span>(<span class="fn">sin</span>(PI/<span class="num">6</span>))        <span class="cm"># 0.5</span>
+<span class="fn">print</span>(<span class="fn">cos</span>(PI/<span class="num">3</span>))        <span class="cm"># 0.5</span>
+<span class="fn">print</span>(<span class="fn">log</span>(E))            <span class="cm"># 1.0</span>
+<span class="fn">print</span>(<span class="fn">log2</span>(<span class="num">1024</span>))       <span class="cm"># 10.0</span>
+<span class="fn">print</span>(<span class="fn">exp</span>(<span class="num">1.0</span>))          <span class="cm"># 2.71828</span>
+<span class="fn">print</span>(<span class="fn">pow</span>(<span class="num">2</span>, <span class="num">10</span>))       <span class="cm"># 1024</span>
+<span class="fn">print</span>(<span class="fn">floor</span>(<span class="num">3.7</span>))       <span class="cm"># 3</span>
+<span class="fn">print</span>(<span class="fn">ceil</span>(<span class="num">3.2</span>))        <span class="cm"># 4</span>
+<span class="fn">print</span>(<span class="fn">round</span>(<span class="num">3.14159</span>,<span class="num">2</span>)) <span class="cm"># 3.14</span></code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#011</span><span class="title">Array Math</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> data = [<span class="num">1.0</span>, <span class="num">4.0</span>, <span class="num">9.0</span>, <span class="num">16.0</span>, <span class="num">25.0</span>]
+<span class="fn">print</span>(<span class="fn">sum</span>(data))       <span class="cm"># 55.0</span>
+<span class="fn">print</span>(<span class="fn">mean</span>(data))      <span class="cm"># 11.0</span>
+<span class="fn">print</span>(<span class="fn">max</span>(data))       <span class="cm"># 25.0</span>
+<span class="fn">print</span>(<span class="fn">min</span>(data))       <span class="cm"># 1.0</span>
+<span class="fn">print</span>(<span class="fn">len</span>(data))       <span class="cm"># 5</span>
+<span class="fn">print</span>(<span class="fn">sort</span>(data))      <span class="cm"># [1,4,9,16,25]</span></code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#012</span><span class="title">Bitwise Operations</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="fn">print</span>(<span class="num">5</span> & <span class="num">3</span>)     <span class="cm"># 1  (AND)</span>
+<span class="fn">print</span>(<span class="num">5</span> | <span class="num">3</span>)     <span class="cm"># 7  (OR)</span>
+<span class="fn">print</span>(<span class="num">5</span> ^ <span class="num">3</span>)     <span class="cm"># 6  (XOR)</span>
+<span class="fn">print</span>(<span class="num">1</span> << <span class="num">3</span>)    <span class="cm"># 8  (left shift)</span>
+<span class="fn">print</span>(<span class="num">8</span> >> <span class="num">1</span>)    <span class="cm"># 4  (right shift)</span></code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#013</span><span class="title">Assignment Operators</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> x = <span class="num">10</span>
+x += <span class="num">5</span>    <span class="cm"># x = 15</span>
+x -= <span class="num">3</span>    <span class="cm"># x = 12</span>
+x *= <span class="num">2</span>    <span class="cm"># x = 24</span>
+x /= <span class="num">4</span>    <span class="cm"># x = 6</span>
+<span class="fn">print</span>(x)  <span class="cm"># 6</span></code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#014</span><span class="title">Ternary Expression</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> score = <span class="num">78</span>
+<span class="kw">let</span> grade = <span class="str">"pass"</span> <span class="kw">if</span> score >= <span class="num">60</span> <span class="kw">else</span> <span class="str">"fail"</span>
+<span class="fn">print</span>(<span class="str">f"Score {score}: {grade}"</span>)
+
+<span class="kw">let</span> energy = <span class="num">-1.137</span>
+<span class="kw">let</span> status = <span class="str">"converged"</span> <span class="kw">if</span> <span class="fn">abs</span>(energy) > <span class="num">1.0</span> <span class="kw">else</span> <span class="str">"not converged"</span></code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#015</span><span class="title">None Handling</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> result = <span class="kw">None</span>
+<span class="kw">if</span> result == <span class="kw">None</span> {
+    <span class="fn">print</span>(<span class="str">"No result yet"</span>)
+}
+<span class="kw">let</span> val = result <span class="kw">if</span> result != <span class="kw">None</span> <span class="kw">else</span> <span class="num">0.0</span>
+<span class="fn">print</span>(<span class="str">f"Value: {val}"</span>)</code></pre></div></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div class="cat" id="control"><div class="cat-title">Control Flow <span class="badge">10 programs</span></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#016</span><span class="title">If / Else If / Else</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> temp = <span class="num">37.8</span>
+<span class="kw">if</span> temp > <span class="num">38.5</span> {
+    <span class="fn">print</span>(<span class="str">"High fever"</span>)
+} <span class="kw">else if</span> temp > <span class="num">37.5</span> {
+    <span class="fn">print</span>(<span class="str">"Mild fever"</span>)
+} <span class="kw">else</span> {
+    <span class="fn">print</span>(<span class="str">"Normal"</span>)
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#017</span><span class="title">For Loop — Range</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>) { <span class="fn">print</span>(i) }
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">2</span>, <span class="num">8</span>) { <span class="fn">print</span>(i) }
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">0</span>, <span class="num">100</span>, <span class="num">10</span>) {
+    <span class="fn">print</span>(<span class="str">f"Progress: {i}%"</span>)
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#018</span><span class="title">For Loop — List &amp; Dict</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> elements = [<span class="str">"H"</span>, <span class="str">"He"</span>, <span class="str">"Li"</span>, <span class="str">"Be"</span>]
+<span class="kw">for</span> el <span class="kw">in</span> elements { <span class="fn">print</span>(el) }
+<span class="kw">for</span> (i, el) <span class="kw">in</span> <span class="fn">enumerate</span>(elements) {
+    <span class="fn">print</span>(<span class="str">f"{i+1}. {el}"</span>)
+}
+<span class="kw">let</span> masses = {<span class="str">"H"</span>: <span class="num">1.008</span>, <span class="str">"C"</span>: <span class="num">12.011</span>}
+<span class="kw">for</span> (sym, m) <span class="kw">in</span> masses.<span class="fn">items</span>() {
+    <span class="fn">print</span>(<span class="str">f"{sym}: {m} g/mol"</span>)
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#019</span><span class="title">While Loop — Convergence</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> energy = <span class="num">100.0</span>
+<span class="kw">let</span> tol = <span class="num">1e-8</span>
+<span class="kw">let</span> iter = <span class="num">0</span>
+<span class="kw">while</span> energy > tol {
+    energy = energy * <span class="num">0.5</span>
+    iter += <span class="num">1</span>
+    <span class="kw">if</span> iter > <span class="num">1000</span> { <span class="kw">break</span> }
+}
+<span class="fn">print</span>(<span class="str">f"Converged in {iter} steps"</span>)</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#020</span><span class="title">Loop with Break</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> target = <span class="num">42</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">100</span>) {
+    <span class="kw">if</span> i * i > target { <span class="fn">print</span>(<span class="str">f"Found: {i}"</span>); <span class="kw">break</span> }
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#021</span><span class="title">Pattern Matching — Values</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> blood = <span class="str">"A+"</span>
+<span class="kw">match</span> blood {
+    <span class="str">"O-"</span>      => <span class="fn">print</span>(<span class="str">"Universal donor"</span>),
+    <span class="str">"AB+"</span>     => <span class="fn">print</span>(<span class="str">"Universal recipient"</span>),
+    <span class="str">"A+"</span>|<span class="str">"A-"</span> => <span class="fn">print</span>(<span class="str">"Type A"</span>),
+    _         => <span class="fn">print</span>(<span class="str">"Other type"</span>),
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#022</span><span class="title">Nested Loops — Matrix</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> matrix = [[<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>], [<span class="num">4</span>,<span class="num">5</span>,<span class="num">6</span>], [<span class="num">7</span>,<span class="num">8</span>,<span class="num">9</span>]]
+<span class="kw">for</span> row <span class="kw">in</span> matrix {
+    <span class="kw">for</span> val <span class="kw">in</span> row { <span class="fn">print</span>(val) }
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#023</span><span class="title">Break &amp; Continue</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">20</span>) {
+    <span class="kw">if</span> i % <span class="num">3</span> == <span class="num">0</span> { <span class="kw">continue</span> }
+    <span class="kw">if</span> i > <span class="num">15</span> { <span class="kw">break</span> }
+    <span class="fn">print</span>(i)
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#024</span><span class="title">Infinite Loop</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> count = <span class="num">0</span>
+<span class="kw">loop</span> {
+    count += <span class="num">1</span>
+    <span class="kw">if</span> count >= <span class="num">10</span> { <span class="kw">break</span> }
+}
+<span class="fn">print</span>(<span class="str">f"Counted to {count}"</span>)</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#025</span><span class="title">Enumerate &amp; Zip</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> syms = [<span class="str">"H"</span>, <span class="str">"C"</span>, <span class="str">"O"</span>]
+<span class="kw">let</span> masses = [<span class="num">1.008</span>, <span class="num">12.011</span>, <span class="num">15.999</span>]
+<span class="kw">for</span> (sym, mass) <span class="kw">in</span> <span class="fn">zip</span>(syms, masses) {
+    <span class="fn">print</span>(<span class="str">f"{sym}: {mass} g/mol"</span>)
+}
+<span class="kw">for</span> (i, sym) <span class="kw">in</span> <span class="fn">enumerate</span>(syms) {
+    <span class="fn">print</span>(<span class="str">f"Element {i+1}: {sym}"</span>)
+}</code></pre></div></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div class="cat" id="data"><div class="cat-title">Data Structures <span class="badge">10 programs</span></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#026</span><span class="title">Lists — Create &amp; Modify</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> nums = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>]
+nums.<span class="fn">append</span>(<span class="num">6</span>)
+nums.<span class="fn">insert</span>(<span class="num">0</span>, <span class="num">0</span>)
+<span class="kw">let</span> last = nums.<span class="fn">pop</span>()
+nums.<span class="fn">sort</span>()
+nums.<span class="fn">reverse</span>()
+<span class="fn">print</span>(nums)
+<span class="fn">print</span>(nums[<span class="num">0</span>])     <span class="cm"># first</span>
+<span class="fn">print</span>(nums[<span class="num">-1</span>])    <span class="cm"># last</span>
+<span class="fn">print</span>(nums[<span class="num">1</span>..<span class="num">4</span>])  <span class="cm"># slice</span></code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#027</span><span class="title">List Comprehension</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> sq = [x*x <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>,<span class="num">11</span>)]
+<span class="fn">print</span>(sq)  <span class="cm"># [1,4,9,16,25,36,49,64,81,100]</span>
+
+<span class="kw">let</span> evens = [x <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="num">20</span>) <span class="kw">if</span> x%<span class="num">2</span>==<span class="num">0</span>]
+<span class="fn">print</span>(evens)  <span class="cm"># [0,2,4,6,8,10,12,14,16,18]</span></code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#028</span><span class="title">Dictionaries</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> periodic = {
+    <span class="str">"H"</span>:  {<span class="str">"mass"</span>: <span class="num">1.008</span>,  <span class="str">"number"</span>: <span class="num">1</span>},
+    <span class="str">"He"</span>: {<span class="str">"mass"</span>: <span class="num">4.003</span>,  <span class="str">"number"</span>: <span class="num">2</span>},
+    <span class="str">"Li"</span>: {<span class="str">"mass"</span>: <span class="num">6.941</span>,  <span class="str">"number"</span>: <span class="num">3</span>},
+}
+<span class="fn">print</span>(periodic[<span class="str">"H"</span>][<span class="str">"mass"</span>])  <span class="cm"># 1.008</span>
+<span class="fn">print</span>(<span class="str">"C"</span> <span class="kw">in</span> periodic)        <span class="cm"># false</span>
+periodic[<span class="str">"C"</span>] = {<span class="str">"mass"</span>: <span class="num">12.011</span>, <span class="str">"number"</span>: <span class="num">6</span>}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#029</span><span class="title">Sets &amp; Set Algebra</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> a = {<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>}
+<span class="kw">let</span> b = {<span class="num">4</span>,<span class="num">5</span>,<span class="num">6</span>,<span class="num">7</span>}
+<span class="fn">print</span>(a | b)    <span class="cm"># Union: {1,2,3,4,5,6,7}</span>
+<span class="fn">print</span>(a & b)    <span class="cm"># Intersection: {4,5}</span>
+<span class="fn">print</span>(a - b)    <span class="cm"># Difference: {1,2,3}</span>
+<span class="fn">print</span>(a ^ b)    <span class="cm"># Symmetric: {1,2,3,6,7}</span></code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#030</span><span class="title">Tuples &amp; Unpacking</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> atom = (<span class="str">"Carbon"</span>, <span class="str">"C"</span>, <span class="num">6</span>, <span class="num">12.011</span>)
+<span class="kw">let</span> (name, sym, z, mass) = atom
+<span class="fn">print</span>(<span class="str">f"{name} ({sym}): Z={z}, MW={mass}"</span>)</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#031</span><span class="title">Stack (LIFO)</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> stack = <span class="type">Stack</span>::<span class="fn">new</span>()
+stack.<span class="fn">push</span>(<span class="str">"step_1"</span>)
+stack.<span class="fn">push</span>(<span class="str">"step_2"</span>)
+stack.<span class="fn">push</span>(<span class="str">"step_3"</span>)
+<span class="fn">print</span>(stack.<span class="fn">peek</span>())  <span class="cm"># "step_3"</span>
+<span class="fn">print</span>(stack.<span class="fn">pop</span>())   <span class="cm"># "step_3"</span>
+<span class="fn">print</span>(stack.<span class="fn">size</span>())  <span class="cm"># 2</span></code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#032</span><span class="title">Queue (FIFO)</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> q = <span class="type">Queue</span>::<span class="fn">new</span>()
+q.<span class="fn">enqueue</span>(<span class="str">"sample_A"</span>)
+q.<span class="fn">enqueue</span>(<span class="str">"sample_B"</span>)
+q.<span class="fn">enqueue</span>(<span class="str">"sample_C"</span>)
+<span class="fn">print</span>(q.<span class="fn">front</span>())    <span class="cm"># "sample_A"</span>
+<span class="fn">print</span>(q.<span class="fn">dequeue</span>())  <span class="cm"># "sample_A"</span></code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#033</span><span class="title">MinHeap</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> heap = <span class="type">MinHeap</span>::<span class="fn">new</span>()
+<span class="kw">for</span> v <span class="kw">in</span> [<span class="num">5.0</span>, <span class="num">2.0</span>, <span class="num">8.0</span>, <span class="num">1.0</span>, <span class="num">9.0</span>] { heap.<span class="fn">push</span>(v) }
+<span class="fn">print</span>(heap.<span class="fn">pop</span>())  <span class="cm"># 1.0 (smallest)</span>
+<span class="fn">print</span>(heap.<span class="fn">pop</span>())  <span class="cm"># 2.0</span></code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#034</span><span class="title">Binary Search Tree</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> tree = <span class="type">BST</span>::<span class="fn">new</span>()
+<span class="kw">for</span> v <span class="kw">in</span> [<span class="num">5</span>,<span class="num">3</span>,<span class="num">8</span>,<span class="num">1</span>,<span class="num">4</span>,<span class="num">7</span>,<span class="num">9</span>] { tree.<span class="fn">insert</span>(v) }
+<span class="fn">print</span>(tree.<span class="fn">search</span>(<span class="num">4</span>))   <span class="cm"># true</span>
+<span class="fn">print</span>(tree.<span class="fn">inorder</span>())   <span class="cm"># [1,3,4,5,7,8,9]</span>
+<span class="fn">print</span>(tree.<span class="fn">min</span>())       <span class="cm"># 1</span>
+<span class="fn">print</span>(tree.<span class="fn">height</span>())    <span class="cm"># 3</span></code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#035</span><span class="title">Graph — BFS &amp; Dijkstra</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> g = <span class="type">Graph</span>::<span class="fn">new</span>(<span class="num">6</span>)
+g.<span class="fn">add_edge</span>(<span class="num">0</span>,<span class="num">1</span>); g.<span class="fn">add_edge</span>(<span class="num">1</span>,<span class="num">2</span>); g.<span class="fn">add_edge</span>(<span class="num">0</span>,<span class="num">3</span>)
+g.<span class="fn">add_weighted_edge</span>(<span class="num">2</span>, <span class="num">4</span>, <span class="num">3.5</span>)
+<span class="fn">print</span>(g.<span class="fn">bfs</span>(<span class="num">0</span>))           <span class="cm"># [0,1,3,2,4]</span>
+<span class="fn">print</span>(g.<span class="fn">dfs</span>(<span class="num">0</span>))           <span class="cm"># [0,1,2,4,3]</span>
+<span class="kw">let</span> (dist, path) = g.<span class="fn">shortest_path</span>(<span class="num">0</span>, <span class="num">4</span>)
+<span class="fn">print</span>(<span class="str">f"Distance: {dist}, Path: {path}"</span>)</code></pre></div></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div class="cat" id="functions"><div class="cat-title">Functions <span class="badge">8 programs</span></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#036</span><span class="title">Basic Function</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">fn</span> <span class="fn">greet</span>(name: <span class="type">string</span>) -> <span class="type">string</span> {
+    <span class="kw">return</span> <span class="str">f"Hello, {name}!"</span>
+}
+<span class="fn">print</span>(<span class="fn">greet</span>(<span class="str">"Scientist"</span>))</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#037</span><span class="title">Default Parameters</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">fn</span> <span class="fn">circle_area</span>(r: <span class="type">float</span>, pi: <span class="type">float</span> = <span class="num">3.14159</span>) -> <span class="type">float</span> {
+    <span class="kw">return</span> pi * r * r
+}
+<span class="fn">print</span>(<span class="fn">circle_area</span>(<span class="num">5.0</span>))  <span class="cm"># 78.54</span></code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#038</span><span class="title">Multiple Return Values</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">fn</span> <span class="fn">stats</span>(data: <span class="type">list</span>) -> (<span class="type">float</span>, <span class="type">float</span>) {
+    <span class="kw">return</span> (<span class="fn">mean</span>(data), <span class="fn">max</span>(data) - <span class="fn">min</span>(data))
+}
+<span class="kw">let</span> (avg, rng) = <span class="fn">stats</span>([<span class="num">1.0</span>, <span class="num">2.0</span>, <span class="num">3.0</span>, <span class="num">4.0</span>])
+<span class="fn">print</span>(<span class="str">f"Mean={avg}, Range={rng}"</span>)</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#039</span><span class="title">Lambda Functions</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> square = <span class="kw">fn</span>(x) => x * x
+<span class="kw">let</span> add = <span class="kw">fn</span>(x, y) => x + y
+<span class="fn">print</span>(<span class="fn">square</span>(<span class="num">7</span>))     <span class="cm"># 49</span>
+<span class="fn">print</span>(<span class="fn">add</span>(<span class="num">3</span>, <span class="num">4</span>))    <span class="cm"># 7</span></code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#040</span><span class="title">Map, Filter, Reduce</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> nums = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>]
+<span class="kw">let</span> squares = <span class="fn">map</span>(<span class="kw">fn</span>(x) => x*x, nums)
+<span class="kw">let</span> evens = <span class="fn">filter</span>(<span class="kw">fn</span>(x) => x%<span class="num">2</span>==<span class="num">0</span>, nums)
+<span class="kw">let</span> product = <span class="fn">reduce</span>(<span class="kw">fn</span>(a,x) => a*x, nums, <span class="num">1</span>)
+<span class="fn">print</span>(squares)  <span class="cm"># [1,4,9,16,25]</span>
+<span class="fn">print</span>(evens)    <span class="cm"># [2,4]</span>
+<span class="fn">print</span>(product)  <span class="cm"># 120</span></code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#041</span><span class="title">Closures</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">fn</span> <span class="fn">make_multiplier</span>(factor: <span class="type">float</span>) -> <span class="type">function</span> {
+    <span class="kw">return</span> <span class="kw">fn</span>(x) => x * factor
+}
+<span class="kw">let</span> double = <span class="fn">make_multiplier</span>(<span class="num">2.0</span>)
+<span class="kw">let</span> triple = <span class="fn">make_multiplier</span>(<span class="num">3.0</span>)
+<span class="fn">print</span>(<span class="fn">double</span>(<span class="num">5.0</span>))  <span class="cm"># 10.0</span>
+<span class="fn">print</span>(<span class="fn">triple</span>(<span class="num">5.0</span>))  <span class="cm"># 15.0</span></code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#042</span><span class="title">Pipeline Operator</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> result = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>,<span class="num">6</span>,<span class="num">7</span>,<span class="num">8</span>,<span class="num">9</span>,<span class="num">10</span>]
+    |> <span class="fn">filter</span>(<span class="kw">fn</span>(x) => x%<span class="num">2</span>==<span class="num">0</span>)
+    |> <span class="fn">map</span>(<span class="kw">fn</span>(x) => x*x)
+    |> <span class="fn">reduce</span>(<span class="kw">fn</span>(a,b) => a+b)
+<span class="fn">print</span>(result)  <span class="cm"># 220</span></code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#043</span><span class="title">Recursive Fibonacci</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> memo = {}
+<span class="kw">fn</span> <span class="fn">fib</span>(n: <span class="type">int</span>) -> <span class="type">int</span> {
+    <span class="kw">if</span> n <= <span class="num">1</span> { <span class="kw">return</span> n }
+    <span class="kw">if</span> n <span class="kw">in</span> memo { <span class="kw">return</span> memo[n] }
+    memo[n] = <span class="fn">fib</span>(n-<span class="num">1</span>) + <span class="fn">fib</span>(n-<span class="num">2</span>)
+    <span class="kw">return</span> memo[n]
+}
+<span class="fn">print</span>(<span class="fn">fib</span>(<span class="num">30</span>))  <span class="cm"># 832040</span></code></pre></div></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div class="cat" id="oop"><div class="cat-title">Object-Oriented Programming <span class="badge">5 programs</span></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#044</span><span class="title">Class — Molecule</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">class</span> <span class="type">Molecule</span> {
+    name: <span class="type">string</span>, atoms: <span class="type">list</span>, charge: <span class="type">int</span> = <span class="num">0</span>,
+    <span class="kw">fn</span> <span class="fn">new</span>(name: <span class="type">string</span>, atoms: <span class="type">list</span>) -> <span class="type">Molecule</span> {
+        <span class="kw">return</span> <span class="type">Molecule</span> { name: name, atoms: atoms }
+    }
+    <span class="kw">fn</span> <span class="fn">n_atoms</span>(self) -> <span class="type">int</span> { <span class="kw">return</span> <span class="fn">len</span>(self.atoms) }
+}
+<span class="kw">let</span> water = <span class="type">Molecule</span>::<span class="fn">new</span>(<span class="str">"Water"</span>, [<span class="str">"H"</span>,<span class="str">"H"</span>,<span class="str">"O"</span>])
+<span class="fn">print</span>(water.<span class="fn">n_atoms</span>())  <span class="cm"># 3</span></code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#045</span><span class="title">Inheritance — Drug from Molecule</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">class</span> <span class="type">Drug</span> <span class="kw">extends</span> <span class="type">Molecule</span> {
+    target: <span class="type">string</span> = <span class="str">"unknown"</span>,
+    ic50: <span class="type">float</span> = <span class="num">0.0</span>,
+    <span class="kw">fn</span> <span class="fn">passes_lipinski</span>(self) -> <span class="type">bool</span> {
+        <span class="kw">return</span> self._mass <= <span class="num">500.0</span>
+    }
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#046</span><span class="title">Polymorphism — Shapes</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">class</span> <span class="type">Circle</span> { radius: <span class="type">float</span>,
+    <span class="kw">fn</span> <span class="fn">area</span>(self) -> <span class="type">float</span> { <span class="kw">return</span> PI * self.radius ** <span class="num">2</span> }
+}
+<span class="kw">class</span> <span class="type">Rectangle</span> { w: <span class="type">float</span>, h: <span class="type">float</span>,
+    <span class="kw">fn</span> <span class="fn">area</span>(self) -> <span class="type">float</span> { <span class="kw">return</span> self.w * self.h }
+}
+<span class="kw">let</span> shapes = [<span class="type">Circle</span>{radius:<span class="num">5.0</span>}, <span class="type">Rectangle</span>{w:<span class="num">4.0</span>,h:<span class="num">6.0</span>}]
+<span class="kw">for</span> s <span class="kw">in</span> shapes { <span class="fn">print</span>(s.<span class="fn">area</span>()) }</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#047</span><span class="title">Struct — Atom</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">struct</span> <span class="type">Atom</span> {
+    symbol: <span class="type">string</span>, number: <span class="type">int</span>, mass: <span class="type">float</span>,
+    <span class="kw">fn</span> <span class="fn">is_metal</span>(self) -> <span class="type">bool</span> { <span class="kw">return</span> self.number > <span class="num">20</span> }
+}
+<span class="kw">let</span> fe = <span class="type">Atom</span> { symbol:<span class="str">"Fe"</span>, number:<span class="num">26</span>, mass:<span class="num">55.845</span> }
+<span class="fn">print</span>(fe.<span class="fn">is_metal</span>())  <span class="cm"># true</span></code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#048</span><span class="title">Error Handling — Try/Catch</span><span class="tags"><span class="tag tag-basic">basic</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">try</span> {
+    <span class="kw">let</span> result = <span class="fn">run_vqe</span>(molecule)
+    <span class="fn">print</span>(<span class="str">f"Energy: {result.energy}"</span>)
+} <span class="kw">catch</span> <span class="type">ConvergenceError</span> <span class="kw">as</span> e {
+    <span class="fn">print</span>(<span class="str">f"Failed: {e.message}"</span>)
+} <span class="kw">finally</span> {
+    <span class="fn">print</span>(<span class="str">"Cleanup done"</span>)
+}</code></pre></div></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div class="cat" id="qbasics"><div class="cat-title">Quantum Basics <span class="badge">12 programs</span></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#049</span><span class="title">Hadamard Superposition</span><span class="tags"><span class="tag tag-quantum">quantum</span></span><span class="arrow">▾</span></div><div class="prog-body"><div class="prog-desc">Put a qubit into equal superposition of |0⟩ and |1⟩.</div><pre><code><span class="kw">simulate</span> {
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(<span class="num">1</span>)
+    <span class="gate">H</span>(q[<span class="num">0</span>])
+    <span class="kw">let</span> r = <span class="fn">measure_all</span>(q, shots=<span class="num">1000</span>)
+    <span class="fn">print</span>(r)  <span class="cm"># ~500 "0", ~500 "1"</span>
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#050</span><span class="title">All Single-Qubit Gates</span><span class="tags"><span class="tag tag-quantum">quantum</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">simulate</span> {
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(<span class="num">8</span>)
+    <span class="gate">X</span>(q[<span class="num">0</span>]); <span class="gate">Y</span>(q[<span class="num">1</span>]); <span class="gate">Z</span>(q[<span class="num">2</span>]); <span class="gate">H</span>(q[<span class="num">3</span>])
+    <span class="gate">S</span>(q[<span class="num">4</span>]); <span class="gate">T</span>(q[<span class="num">5</span>]); <span class="gate">SX</span>(q[<span class="num">6</span>])
+    <span class="gate">Rx</span>(q[<span class="num">0</span>], PI/<span class="num">4</span>); <span class="gate">Ry</span>(q[<span class="num">1</span>], PI/<span class="num">2</span>); <span class="gate">Rz</span>(q[<span class="num">2</span>], PI/<span class="num">3</span>)
+    <span class="gate">U3</span>(q[<span class="num">7</span>], PI/<span class="num">4</span>, PI/<span class="num">2</span>, PI/<span class="num">8</span>)
+    <span class="fn">print</span>(<span class="fn">measure_all</span>(q, shots=<span class="num">1000</span>))
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#051</span><span class="title">Two-Qubit Gates</span><span class="tags"><span class="tag tag-quantum">quantum</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">simulate</span> {
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(<span class="num">4</span>)
+    <span class="gate">H</span>(q[<span class="num">0</span>]); <span class="gate">CNOT</span>(q[<span class="num">0</span>], q[<span class="num">1</span>])
+    <span class="gate">CZ</span>(q[<span class="num">2</span>], q[<span class="num">3</span>])
+    <span class="gate">SWAP</span>(q[<span class="num">0</span>], q[<span class="num">2</span>])
+    <span class="gate">CRz</span>(q[<span class="num">0</span>], q[<span class="num">1</span>], PI/<span class="num">4</span>)
+    <span class="gate">RZZ</span>(q[<span class="num">2</span>], q[<span class="num">3</span>], PI/<span class="num">2</span>)
+    <span class="fn">print</span>(<span class="fn">measure_all</span>(q, shots=<span class="num">1000</span>))
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#052</span><span class="title">Bell State — Entanglement</span><span class="tags"><span class="tag tag-quantum">quantum</span></span><span class="arrow">▾</span></div><div class="prog-body"><div class="prog-desc">Create maximum entanglement between two qubits. Measuring one instantly determines the other.</div><pre><code><span class="kw">simulate</span> {
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(<span class="num">2</span>)
+    <span class="gate">H</span>(q[<span class="num">0</span>])
+    <span class="gate">CNOT</span>(q[<span class="num">0</span>], q[<span class="num">1</span>])
+    <span class="kw">let</span> r = <span class="fn">measure_all</span>(q, shots=<span class="num">10000</span>)
+    <span class="fn">print</span>(r)  <span class="cm"># {"00":~5000, "11":~5000} — NEVER "01" or "10"</span>
+    <span class="fn">print</span>(<span class="str">f"Entanglement: {expectation_zz(q[0], q[1]):.4f}"</span>)
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#053</span><span class="title">GHZ State (3 qubits)</span><span class="tags"><span class="tag tag-quantum">quantum</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">simulate</span> {
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(<span class="num">3</span>)
+    <span class="gate">H</span>(q[<span class="num">0</span>])
+    <span class="gate">CNOT</span>(q[<span class="num">0</span>], q[<span class="num">1</span>])
+    <span class="gate">CNOT</span>(q[<span class="num">1</span>], q[<span class="num">2</span>])
+    <span class="fn">print</span>(<span class="fn">measure_all</span>(q, shots=<span class="num">1000</span>))
+    <span class="cm"># {"000":~500, "111":~500}</span>
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#054</span><span class="title">Quantum Teleportation</span><span class="tags"><span class="tag tag-quantum">quantum</span></span><span class="arrow">▾</span></div><div class="prog-body"><div class="prog-desc">Transfer a quantum state from qubit 0 to qubit 2 using entanglement and classical communication.</div><pre><code><span class="kw">simulate</span> {
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(<span class="num">3</span>)
+    <span class="cm"># Prepare state to teleport</span>
+    <span class="gate">Ry</span>(q[<span class="num">0</span>], PI/<span class="num">3</span>)
+    <span class="cm"># Create Bell pair between q[1] and q[2]</span>
+    <span class="gate">H</span>(q[<span class="num">1</span>]); <span class="gate">CNOT</span>(q[<span class="num">1</span>], q[<span class="num">2</span>])
+    <span class="cm"># Bell measurement on q[0], q[1]</span>
+    <span class="gate">CNOT</span>(q[<span class="num">0</span>], q[<span class="num">1</span>]); <span class="gate">H</span>(q[<span class="num">0</span>])
+    <span class="kw">let</span> b0 = <span class="fn">measure</span>(q[<span class="num">0</span>])
+    <span class="kw">let</span> b1 = <span class="fn">measure</span>(q[<span class="num">1</span>])
+    <span class="cm"># Classical corrections</span>
+    <span class="kw">if</span> b1 == <span class="num">1</span> { <span class="gate">X</span>(q[<span class="num">2</span>]) }
+    <span class="kw">if</span> b0 == <span class="num">1</span> { <span class="gate">Z</span>(q[<span class="num">2</span>]) }
+    <span class="fn">print</span>(<span class="str">"State teleported to qubit 2!"</span>)
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#055</span><span class="title">Superdense Coding</span><span class="tags"><span class="tag tag-quantum">quantum</span></span><span class="arrow">▾</span></div><div class="prog-body"><div class="prog-desc">Send 2 classical bits using only 1 qubit transmission.</div><pre><code><span class="kw">simulate</span> {
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(<span class="num">2</span>)
+    <span class="cm"># Create shared Bell pair</span>
+    <span class="gate">H</span>(q[<span class="num">0</span>]); <span class="gate">CNOT</span>(q[<span class="num">0</span>], q[<span class="num">1</span>])
+    <span class="cm"># Alice encodes 2 bits: "11"</span>
+    <span class="gate">X</span>(q[<span class="num">0</span>]); <span class="gate">Z</span>(q[<span class="num">0</span>])  <span class="cm"># encode "11"</span>
+    <span class="cm"># Bob decodes</span>
+    <span class="gate">CNOT</span>(q[<span class="num">0</span>], q[<span class="num">1</span>]); <span class="gate">H</span>(q[<span class="num">0</span>])
+    <span class="fn">print</span>(<span class="fn">measure_all</span>(q, shots=<span class="num">100</span>))  <span class="cm"># {"11": 100}</span>
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#056</span><span class="title">Quantum Fourier Transform</span><span class="tags"><span class="tag tag-quantum">quantum</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">simulate</span> {
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(<span class="num">4</span>)
+    <span class="gate">X</span>(q[<span class="num">0</span>]); <span class="gate">X</span>(q[<span class="num">2</span>])  <span class="cm"># prepare |0101⟩ = |5⟩</span>
+    <span class="fn">qft</span>(q)
+    <span class="kw">let</span> probs = <span class="fn">probabilities</span>(q)
+    <span class="fn">print</span>(<span class="str">"QFT of |5⟩:"</span>, probs)
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#057</span><span class="title">Toffoli &amp; Fredkin Gates</span><span class="tags"><span class="tag tag-quantum">quantum</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">simulate</span> {
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(<span class="num">3</span>)
+    <span class="gate">X</span>(q[<span class="num">0</span>]); <span class="gate">X</span>(q[<span class="num">1</span>])
+    <span class="gate">Toffoli</span>(q[<span class="num">0</span>], q[<span class="num">1</span>], q[<span class="num">2</span>])  <span class="cm"># flip q[2] since both controls=1</span>
+    <span class="fn">print</span>(<span class="fn">measure_all</span>(q, shots=<span class="num">100</span>))  <span class="cm"># {"111": 100}</span>
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#058</span><span class="title">Measurement Histogram</span><span class="tags"><span class="tag tag-quantum">quantum</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">simulate</span> {
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(<span class="num">3</span>)
+    <span class="gate">H</span>(q[<span class="num">0</span>]); <span class="gate">H</span>(q[<span class="num">1</span>]); <span class="gate">H</span>(q[<span class="num">2</span>])  <span class="cm"># uniform superposition</span>
+    <span class="kw">let</span> hist = <span class="fn">measure_all</span>(q, shots=<span class="num">8000</span>)
+    <span class="fn">print</span>(hist)  <span class="cm"># ~1000 each of 000,001,...,111</span>
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#059</span><span class="title">Statevector Inspection</span><span class="tags"><span class="tag tag-quantum">quantum</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">simulate</span> {
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(<span class="num">2</span>)
+    <span class="gate">H</span>(q[<span class="num">0</span>]); <span class="gate">CNOT</span>(q[<span class="num">0</span>], q[<span class="num">1</span>])
+    <span class="kw">let</span> sv = <span class="fn">statevector</span>(q)
+    <span class="fn">print</span>(<span class="str">"Statevector:"</span>, sv)
+    <span class="kw">let</span> probs = <span class="fn">probabilities</span>(q)
+    <span class="fn">print</span>(<span class="str">"Probabilities:"</span>, probs)
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#060</span><span class="title">Expectation Values</span><span class="tags"><span class="tag tag-quantum">quantum</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">simulate</span> {
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(<span class="num">2</span>)
+    <span class="gate">H</span>(q[<span class="num">0</span>]); <span class="gate">CNOT</span>(q[<span class="num">0</span>], q[<span class="num">1</span>])
+    <span class="fn">print</span>(<span class="str">f"⟨Z₀⟩ = {expectation_z(q[0]):.4f}"</span>)      <span class="cm"># 0.0</span>
+    <span class="fn">print</span>(<span class="str">f"⟨Z₀Z₁⟩ = {expectation_zz(q[0],q[1]):.4f}"</span>) <span class="cm"># 1.0</span>
+    <span class="fn">print</span>(<span class="str">f"NNZ = {engine_nnz()}"</span>)                    <span class="cm"># 2</span>
+}</code></pre></div></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div class="cat" id="qalgo"><div class="cat-title">Quantum Algorithms <span class="badge">10 programs</span></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#061</span><span class="title">Grover Search (4 qubits)</span><span class="tags"><span class="tag tag-quantum">quantum</span><span class="tag tag-math">algorithm</span></span><span class="arrow">▾</span></div><div class="prog-body"><div class="prog-desc">Find target item in unsorted database — quadratic speedup over classical.</div><pre><code><span class="kw">simulate</span> {
+    <span class="kw">let</span> result = <span class="fn">grover_search</span>(n_qubits=<span class="num">4</span>, target=<span class="num">11</span>)
+    <span class="fn">print</span>(<span class="str">f"Found: {result.solution}"</span>)
+    <span class="fn">print</span>(<span class="str">f"Iterations: {result.n_iterations}"</span>)
+    <span class="fn">print</span>(<span class="str">f"Probability: {result.probability:.4f}"</span>)
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#062</span><span class="title">Grover Search (7 qubits — 128 items)</span><span class="tags"><span class="tag tag-quantum">quantum</span><span class="tag tag-math">algorithm</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">simulate</span> {
+    <span class="kw">let</span> r = <span class="fn">grover_search</span>(n_qubits=<span class="num">7</span>, target=<span class="num">42</span>,
+        n_rounds=<span class="fn">int</span>(PI/<span class="num">4</span> * <span class="fn">sqrt</span>(<span class="num">128</span>)))
+    <span class="fn">print</span>(<span class="str">f"Found {r.found_item} in {r.n_queries} queries"</span>)
+    <span class="fn">print</span>(<span class="str">f"Classical: up to 128 queries"</span>)
+    <span class="fn">print</span>(<span class="str">f"Speedup: {128/r.n_queries:.1f}×"</span>)
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#063</span><span class="title">Deutsch-Jozsa Algorithm</span><span class="tags"><span class="tag tag-quantum">quantum</span><span class="tag tag-math">algorithm</span></span><span class="arrow">▾</span></div><div class="prog-body"><div class="prog-desc">Determine if a function is constant or balanced in ONE query. Classically needs 2^(n-1)+1 queries.</div><pre><code><span class="kw">simulate</span> {
+    <span class="kw">let</span> n = <span class="num">4</span>
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(n + <span class="num">1</span>)
+    <span class="gate">X</span>(q[n]); <span class="gate">H</span>(q[n])     <span class="cm"># ancilla in |−⟩</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n) { <span class="gate">H</span>(q[i]) }
+    <span class="cm"># Balanced oracle: CNOT from each qubit to ancilla</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n) { <span class="gate">CNOT</span>(q[i], q[n]) }
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n) { <span class="gate">H</span>(q[i]) }
+    <span class="kw">let</span> r = <span class="fn">measure_all</span>(q, shots=<span class="num">100</span>)
+    <span class="fn">print</span>(<span class="str">"Result:"</span>, r)  <span class="cm"># non-zero → balanced</span>
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#064</span><span class="title">Bernstein-Vazirani</span><span class="tags"><span class="tag tag-quantum">quantum</span><span class="tag tag-math">algorithm</span></span><span class="arrow">▾</span></div><div class="prog-body"><div class="prog-desc">Find a hidden bitstring in ONE query instead of n classical queries.</div><pre><code><span class="kw">simulate</span> {
+    <span class="kw">let</span> secret = [<span class="num">1</span>, <span class="num">0</span>, <span class="num">1</span>, <span class="num">1</span>, <span class="num">0</span>]
+    <span class="kw">let</span> found = <span class="fn">bernstein_vazirani</span>(n_bits=<span class="num">5</span>, oracle_secret=secret)
+    <span class="fn">print</span>(<span class="str">f"Secret recovered: {found == secret}"</span>)
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#065</span><span class="title">Quantum Phase Estimation</span><span class="tags"><span class="tag tag-quantum">quantum</span><span class="tag tag-math">algorithm</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">simulate</span> {
+    <span class="kw">let</span> phase = <span class="fn">estimate_phase</span>(
+        unitary = <span class="kw">fn</span>(q) { <span class="gate">Rz</span>(q, PI/<span class="num">4</span>) },
+        n_bits = <span class="num">8</span>
+    )
+    <span class="fn">print</span>(<span class="str">f"Estimated phase: {phase:.6f}"</span>)
+    <span class="fn">print</span>(<span class="str">f"Expected: {PI/4:.6f}"</span>)
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#066</span><span class="title">Shor's Factoring Algorithm</span><span class="tags"><span class="tag tag-quantum">quantum</span><span class="tag tag-math">algorithm</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> math
+<span class="kw">simulate</span> {
+    <span class="kw">let</span> f15 = <span class="fn">shor_factor</span>(<span class="num">15</span>)
+    <span class="fn">print</span>(<span class="str">f"15 = {f15[0]} × {f15[1]}"</span>)  <span class="cm"># 3 × 5</span>
+    <span class="kw">let</span> f21 = <span class="fn">shor_factor</span>(<span class="num">21</span>)
+    <span class="fn">print</span>(<span class="str">f"21 = {f21[0]} × {f21[1]}"</span>)  <span class="cm"># 3 × 7</span>
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#067</span><span class="title">HHL Linear Solver</span><span class="tags"><span class="tag tag-quantum">quantum</span><span class="tag tag-math">algorithm</span></span><span class="arrow">▾</span></div><div class="prog-body"><div class="prog-desc">Solve Ax=b on quantum hardware — exponential speedup for sparse systems.</div><pre><code><span class="kw">simulate</span> {
+    <span class="kw">let</span> A = [[<span class="num">2.0</span>, <span class="num">1.0</span>], [<span class="num">1.0</span>, <span class="num">2.0</span>]]
+    <span class="kw">let</span> b = [<span class="num">1.0</span>, <span class="num">0.0</span>]
+    <span class="kw">let</span> result = <span class="fn">hhl_solve</span>(A, b)
+    <span class="fn">print</span>(<span class="str">f"x = {result.x}"</span>)
+    <span class="fn">print</span>(<span class="str">f"Condition number: {result.condition:.2f}"</span>)
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#068</span><span class="title">Quantum Walk on Line</span><span class="tags"><span class="tag tag-quantum">quantum</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">simulate</span> {
+    <span class="kw">let</span> n = <span class="num">8</span>
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(n)
+    <span class="gate">H</span>(q[<span class="num">0</span>])  <span class="cm"># coin qubit in superposition</span>
+    <span class="kw">for</span> step <span class="kw">in</span> <span class="fn">range</span>(<span class="num">20</span>) {
+        <span class="gate">H</span>(q[<span class="num">0</span>])
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, n) { <span class="gate">CNOT</span>(q[<span class="num">0</span>], q[i]) }
+    }
+    <span class="fn">print</span>(<span class="fn">measure_all</span>(q, shots=<span class="num">1000</span>))
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#069</span><span class="title">Quantum Counting</span><span class="tags"><span class="tag tag-quantum">quantum</span><span class="tag tag-math">algorithm</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">simulate</span> {
+    <span class="cm"># Count number of solutions without finding them</span>
+    <span class="kw">let</span> n_qubits = <span class="num">5</span>
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(n_qubits + <span class="num">4</span>)
+    <span class="cm"># QPE on Grover operator gives eigenvalue → count</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">4</span>) { <span class="gate">H</span>(q[i]) }
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">4</span>, n_qubits+<span class="num">4</span>) { <span class="gate">H</span>(q[i]) }
+    <span class="fn">print</span>(<span class="str">"Quantum counting circuit prepared"</span>)
+    <span class="fn">print</span>(<span class="fn">measure_all</span>(q, shots=<span class="num">1000</span>))
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#070</span><span class="title">QAOA — MaxCut</span><span class="tags"><span class="tag tag-quantum">quantum</span><span class="tag tag-phys">physics</span></span><span class="arrow">▾</span></div><div class="prog-body"><div class="prog-desc">Quantum Approximate Optimization for graph partitioning — a flagship hybrid algorithm.</div><pre><code><span class="kw">import</span> physics
+<span class="kw">simulate</span> {
+    <span class="kw">let</span> edges = [(<span class="num">0</span>,<span class="num">1</span>), (<span class="num">1</span>,<span class="num">2</span>), (<span class="num">2</span>,<span class="num">3</span>), (<span class="num">3</span>,<span class="num">0</span>), (<span class="num">0</span>,<span class="num">2</span>)]
+    <span class="kw">let</span> result = <span class="fn">solve_maxcut</span>(edges=edges, n_nodes=<span class="num">4</span>, layers=<span class="num">3</span>)
+    <span class="fn">print</span>(<span class="str">f"Best cut: {result.cut_value}/{len(edges)} edges"</span>)
+    <span class="fn">print</span>(<span class="str">f"Partition: {result.assignment}"</span>)
+}</code></pre></div></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div class="cat" id="chem"><div class="cat-title">Chemistry <span class="badge">8 programs</span></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#071</span><span class="title">H₂ Ground State (VQE)</span><span class="tags"><span class="tag tag-chem">chemistry</span><span class="tag tag-quantum">quantum</span></span><span class="arrow">▾</span></div><div class="prog-body"><div class="prog-desc">Find the ground state energy of molecular hydrogen using the Variational Quantum Eigensolver.</div><pre><code><span class="kw">import</span> chemistry
+<span class="kw">molecule</span> <span class="type">H2</span> { atoms: [H, H], bond_length: <span class="num">0.74</span>, basis_set: <span class="str">"STO-3G"</span> }
+<span class="kw">simulate</span> {
+    <span class="kw">let</span> result = <span class="fn">vqe</span>(<span class="type">H2</span>, ansatz=<span class="str">"EfficientSU2"</span>, layers=<span class="num">2</span>, max_iter=<span class="num">200</span>)
+    <span class="fn">print</span>(<span class="str">f"Ground state energy: {result.energy:.6f} Hartree"</span>)
+    <span class="fn">print</span>(<span class="str">f"Converged: {result.converged}"</span>)
+    <span class="fn">print</span>(<span class="str">f"Iterations: {result.n_iterations}"</span>)
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#072</span><span class="title">H₂ Potential Energy Surface</span><span class="tags"><span class="tag tag-chem">chemistry</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> chemistry
+<span class="kw">molecule</span> <span class="type">H2</span> { atoms: [H, H], bond_length: <span class="num">0.74</span>, basis_set: <span class="str">"STO-3G"</span> }
+<span class="fn">print</span>(<span class="str">"R (Å)     VQE Energy (Ha)"</span>)
+<span class="fn">print</span>(<span class="str">"-"</span> * <span class="num">40</span>)
+<span class="kw">for</span> r <span class="kw">in</span> <span class="fn">range_step</span>(<span class="num">0.4</span>, <span class="num">3.0</span>, <span class="num">0.2</span>) {
+    <span class="kw">let</span> mol = <span class="fn">h2_at_distance</span>(r)
+    <span class="kw">let</span> res = <span class="fn">vqe</span>(mol)
+    <span class="fn">print</span>(<span class="str">f"  {r:.2f}     {res.energy:.6f}"</span>)
+}
+<span class="fn">write_csv</span>(<span class="str">"h2_pes.csv"</span>, <span class="fn">results</span>)</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#073</span><span class="title">LiH Ground State</span><span class="tags"><span class="tag tag-chem">chemistry</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> chemistry
+<span class="kw">molecule</span> <span class="type">LiH</span> { atoms: [Li, H], bond_length: <span class="num">1.595</span>, basis_set: <span class="str">"STO-3G"</span> }
+<span class="kw">simulate</span> {
+    <span class="kw">let</span> result = <span class="fn">vqe</span>(<span class="type">LiH</span>, ansatz=<span class="str">"UCCSD"</span>, max_iter=<span class="num">300</span>)
+    <span class="fn">print</span>(<span class="str">f"LiH energy: {result.energy:.6f} Ha"</span>)
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#074</span><span class="title">Water Molecule (H₂O)</span><span class="tags"><span class="tag tag-chem">chemistry</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> chemistry
+<span class="kw">molecule</span> <span class="type">Water</span> { atoms: [O, H, H], geometry: <span class="str">"equilibrium"</span>, basis_set: <span class="str">"6-31G*"</span> }
+<span class="kw">simulate</span> {
+    <span class="kw">let</span> r = <span class="fn">vqe</span>(<span class="type">Water</span>, ansatz=<span class="str">"EfficientSU2"</span>)
+    <span class="fn">print</span>(<span class="str">f"H₂O energy: {r.energy:.6f} Ha"</span>)
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#075</span><span class="title">Caffeine from SMILES</span><span class="tags"><span class="tag tag-chem">chemistry</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> chemistry
+<span class="kw">molecule</span> <span class="type">Caffeine</span> {
+    smiles: <span class="str">"CN1C=NC2=C1C(=O)N(C(=O)N2C)C"</span>,
+    basis_set: <span class="str">"STO-3G"</span>
+}
+<span class="fn">print</span>(<span class="str">f"Caffeine: {Caffeine.n_atoms()} atoms"</span>)</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#076</span><span class="title">Trotter Time Evolution</span><span class="tags"><span class="tag tag-chem">chemistry</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> chemistry
+<span class="kw">molecule</span> <span class="type">LiH</span> { atoms: [Li, H], bond_length: <span class="num">1.595</span>, basis_set: <span class="str">"STO-3G"</span> }
+<span class="kw">simulate</span> {
+    <span class="kw">let</span> trot = <span class="fn">trotter_evolve</span>(<span class="type">LiH</span>, time=<span class="num">1.0</span>, steps=<span class="num">50</span>, order=<span class="num">2</span>)
+    <span class="fn">print</span>(<span class="str">f"State norm: {trot.norm:.10f}"</span>)  <span class="cm"># should = 1.0</span>
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#077</span><span class="title">Basis Set Comparison</span><span class="tags"><span class="tag tag-chem">chemistry</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> chemistry
+<span class="kw">let</span> basis_sets = [<span class="str">"STO-3G"</span>, <span class="str">"3-21G"</span>, <span class="str">"6-31G*"</span>, <span class="str">"cc-pVDZ"</span>]
+<span class="kw">for</span> bs <span class="kw">in</span> basis_sets {
+    <span class="kw">molecule</span> <span class="type">H2</span> { atoms: [H,H], bond_length: <span class="num">0.74</span>, basis_set: bs }
+    <span class="kw">let</span> r = <span class="fn">vqe</span>(<span class="type">H2</span>)
+    <span class="fn">print</span>(<span class="str">f"{bs:10} → {r.energy:.6f} Ha"</span>)
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#078</span><span class="title">Multi-Molecule Comparison</span><span class="tags"><span class="tag tag-chem">chemistry</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> chemistry
+<span class="kw">molecule</span> <span class="type">H2</span> { atoms:[H,H], bond_length:<span class="num">0.74</span>, basis_set:<span class="str">"STO-3G"</span> }
+<span class="kw">molecule</span> <span class="type">LiH</span> { atoms:[Li,H], bond_length:<span class="num">1.595</span>, basis_set:<span class="str">"STO-3G"</span> }
+<span class="kw">simulate</span> {
+    <span class="fn">print</span>(<span class="str">"=== Quantum Chemistry ==="</span>)
+    <span class="kw">for</span> (mol, name) <span class="kw">in</span> [(<span class="type">H2</span>,<span class="str">"H₂"</span>), (<span class="type">LiH</span>,<span class="str">"LiH"</span>)] {
+        <span class="kw">let</span> r = <span class="fn">vqe</span>(mol, ansatz=<span class="str">"EfficientSU2"</span>)
+        <span class="fn">print</span>(<span class="str">f"{name:6} energy: {r.energy:>12.6f} Ha"</span>)
+    }
+}</code></pre></div></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div class="cat" id="bio"><div class="cat-title">Biology <span class="badge">6 programs</span></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#079</span><span class="title">DNA → RNA → Protein</span><span class="tags"><span class="tag tag-bio">biology</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> biology
+<span class="kw">let</span> dna = <span class="str">"ATGCGATCGATCGATCGATCG"</span>
+<span class="kw">let</span> rna = dna.<span class="fn">transcribe</span>()
+<span class="kw">let</span> protein = rna.<span class="fn">translate</span>()
+<span class="fn">print</span>(<span class="str">f"DNA:     {dna}"</span>)
+<span class="fn">print</span>(<span class="str">f"RNA:     {rna}"</span>)
+<span class="fn">print</span>(<span class="str">f"Protein: {protein}"</span>)</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#080</span><span class="title">Sequence Alignment</span><span class="tags"><span class="tag tag-bio">biology</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> biology.alignment <span class="kw">as</span> align
+<span class="kw">let</span> aln = align.<span class="fn">smith_waterman</span>(<span class="str">"GCATGCG"</span>, <span class="str">"GATTACA"</span>)
+<span class="fn">print</span>(<span class="str">f"Score:   {aln.score}"</span>)
+<span class="fn">print</span>(<span class="str">f"Query:   {aln.seq1_aligned}"</span>)
+<span class="fn">print</span>(<span class="str">f"Subject: {aln.seq2_aligned}"</span>)</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#081</span><span class="title">GC Content Analysis</span><span class="tags"><span class="tag tag-bio">biology</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> biology
+<span class="kw">let</span> dna = <span class="str">"ATGCGATCGATCGATCGATCG"</span>
+<span class="kw">let</span> gc = dna.<span class="fn">gc_content</span>()
+<span class="fn">print</span>(<span class="str">f"GC content: {gc:.1f}%"</span>)
+<span class="kw">let</span> revcomp = dna.<span class="fn">reverse_complement</span>()
+<span class="fn">print</span>(<span class="str">f"Rev comp:  {revcomp}"</span>)</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#082</span><span class="title">HP Protein Folding (QAOA)</span><span class="tags"><span class="tag tag-bio">biology</span><span class="tag tag-quantum">quantum</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> biology
+<span class="kw">simulate</span> {
+    <span class="kw">let</span> seq = <span class="str">"HPPHPPHPPH"</span>
+    <span class="kw">let</span> fold = <span class="fn">fold_protein</span>(seq, method=<span class="str">"QAOA"</span>, n_layers=<span class="num">5</span>)
+    <span class="fn">print</span>(<span class="str">f"H-H contacts: {fold.hh_contacts}/{fold.max_possible}"</span>)
+    <span class="fn">print</span>(<span class="str">f"Energy: {fold.energy:.4f}"</span>)
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#083</span><span class="title">Find Open Reading Frames</span><span class="tags"><span class="tag tag-bio">biology</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> biology
+<span class="kw">let</span> genome = <span class="fn">load_sequence</span>(<span class="str">"genome.fasta"</span>)
+<span class="kw">let</span> genes = genome.<span class="fn">find_orfs</span>()
+<span class="fn">print</span>(<span class="str">f"Found {len(genes)} open reading frames"</span>)
+<span class="kw">for</span> (i, g) <span class="kw">in</span> <span class="fn">enumerate</span>(genes[<span class="num">0</span>..<span class="num">5</span>]) {
+    <span class="fn">print</span>(<span class="str">f"  ORF {i+1}: {g.start}-{g.end} ({g.length} bp)"</span>)
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#084</span><span class="title">Genome Variant Calling</span><span class="tags"><span class="tag tag-bio">biology</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> biology
+<span class="kw">let</span> genome = <span class="fn">load_sequence</span>(<span class="str">"sample.fasta"</span>)
+<span class="kw">let</span> variants = genome.<span class="fn">call_variants</span>(reference=<span class="str">"ref.fasta"</span>)
+<span class="fn">print</span>(<span class="str">f"Variants found: {len(variants)}"</span>)
+<span class="kw">for</span> v <span class="kw">in</span> variants[<span class="num">0</span>..<span class="num">5</span>] {
+    <span class="fn">print</span>(<span class="str">f"  {v.position}: {v.ref_allele} → {v.alt_allele}"</span>)
+}</code></pre></div></div>
+</div>
+
+<!-- Remaining categories: medical, physics, genetics, ML, large-scale, I/O, hardware -->
+<div class="cat" id="med"><div class="cat-title">Medical <span class="badge">5 programs</span></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#085</span><span class="title">Drug Screening</span><span class="tags"><span class="tag tag-med">medical</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> medical
+<span class="kw">let</span> hits = <span class="fn">screen_drugs</span>(target=<span class="str">"ACE2"</span>, library=<span class="fn">load_library</span>(<span class="str">"FDA_approved"</span>), top_n=<span class="num">10</span>)
+<span class="kw">for</span> h <span class="kw">in</span> hits {
+    <span class="fn">print</span>(<span class="str">f"{h.name}: Ki={h.ki:.1f} nM, ΔG={h.binding_energy:.2f} kcal/mol"</span>)
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#086</span><span class="title">Lipinski Rule of Five</span><span class="tags"><span class="tag tag-med">medical</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> medical
+<span class="kw">let</span> hits = <span class="fn">screen_drugs</span>(target=<span class="str">"3CL_PROTEASE"</span>, library=<span class="fn">load_library</span>(<span class="str">"FDA_approved"</span>), top_n=<span class="num">20</span>)
+<span class="kw">for</span> h <span class="kw">in</span> hits {
+    <span class="kw">if</span> h.<span class="fn">passes_ro5</span>() { <span class="fn">print</span>(<span class="str">f"{h.name}: Drug-like ✓"</span>) }
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#087</span><span class="title">Vaccine Epitope Prediction</span><span class="tags"><span class="tag tag-med">medical</span><span class="tag tag-quantum">quantum</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> medical
+<span class="kw">let</span> spike = <span class="fn">load_sequence</span>(<span class="str">"spike_protein.fasta"</span>)
+<span class="kw">let</span> vaccine = <span class="fn">design_vaccine</span>(protein=spike,
+    mhc_alleles=[<span class="str">"HLA-A*02:01"</span>, <span class="str">"HLA-B*07:02"</span>], min_score=<span class="num">0.6</span>)
+<span class="fn">print</span>(<span class="str">f"Epitopes: {len(vaccine.epitopes)}"</span>)
+<span class="fn">print</span>(<span class="str">f"Coverage: {vaccine.coverage:.1f}%"</span>)</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#088</span><span class="title">Binding Energy Calculation</span><span class="tags"><span class="tag tag-med">medical</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> medical
+<span class="kw">let</span> receptor = <span class="fn">load_protein</span>(<span class="str">"ACE2.pdb"</span>)
+<span class="kw">let</span> ligand = <span class="fn">load_molecule</span>(<span class="str">"remdesivir"</span>)
+<span class="kw">let</span> energy = <span class="fn">binding_energy</span>(receptor, ligand)
+<span class="fn">print</span>(<span class="str">f"Binding energy: {energy:.2f} kcal/mol"</span>)</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#089</span><span class="title">Drug-Target Full Pipeline</span><span class="tags"><span class="tag tag-med">medical</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> medical
+<span class="kw">let</span> library = <span class="fn">load_library</span>(<span class="str">"FDA_approved"</span>)
+<span class="fn">print</span>(<span class="str">f"Library: {len(library)} compounds"</span>)
+<span class="kw">let</span> hits = <span class="fn">screen_drugs</span>(target=<span class="str">"3CL_PROTEASE"</span>, library=library, top_n=<span class="num">10</span>)
+<span class="fn">print</span>(<span class="str">f"{'Compound':20} {'Ki (nM)':>10} {'ΔG':>12} {'Ro5':>6}"</span>)
+<span class="kw">for</span> h <span class="kw">in</span> hits {
+    <span class="kw">let</span> ro5 = <span class="str">"✓"</span> <span class="kw">if</span> h.<span class="fn">passes_ro5</span>() <span class="kw">else</span> <span class="str">"✗"</span>
+    <span class="fn">print</span>(<span class="str">f"{h.name:20} {h.ki:>10.1f} {h.binding_energy:>12.3f} {ro5:>6}"</span>)
+}</code></pre></div></div>
+</div>
+
+<div class="cat" id="phys"><div class="cat-title">Physics <span class="badge">8 programs</span></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#090</span><span class="title">Ising Model Ground State</span><span class="tags"><span class="tag tag-phys">physics</span><span class="tag tag-quantum">quantum</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> physics
+<span class="kw">simulate</span> {
+    <span class="kw">let</span> model = <span class="fn">ising_model</span>(n_spins=<span class="num">8</span>, J=<span class="num">1.0</span>, h=<span class="num">1.0</span>)
+    <span class="kw">let</span> gs = <span class="fn">ground_state_energy</span>(model)
+    <span class="fn">print</span>(<span class="str">f"Ground state energy: {gs:.6f}"</span>)
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#091</span><span class="title">Heisenberg Chain Dynamics</span><span class="tags"><span class="tag tag-phys">physics</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> physics
+<span class="kw">simulate</span> {
+    <span class="kw">let</span> chain = <span class="fn">heisenberg_chain</span>(n_spins=<span class="num">6</span>, J=<span class="num">1.0</span>, delta=<span class="num">1.0</span>)
+    <span class="kw">let</span> evolved = <span class="fn">time_evolve</span>(chain, time=<span class="num">2.0</span>, steps=<span class="num">100</span>)
+    <span class="fn">print</span>(<span class="str">f"Magnetisation at t=2: {evolved.magnetisation:.4f}"</span>)
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#092</span><span class="title">VQE Ising Model</span><span class="tags"><span class="tag tag-phys">physics</span><span class="tag tag-quantum">quantum</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> physics
+<span class="kw">let</span> H = <span class="fn">ising_hamiltonian</span>(<span class="num">12</span>, J=<span class="num">1.0</span>, h=<span class="num">0.5</span>)
+<span class="kw">simulate</span> {
+    <span class="kw">let</span> r = <span class="fn">vqe</span>(hamiltonian=H, ansatz=<span class="str">"UCCSD"</span>, n_qubits=<span class="num">12</span>, max_iter=<span class="num">300</span>)
+    <span class="fn">print</span>(<span class="str">f"Ground state: {r.energy:.8f}"</span>)
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#093</span><span class="title">Spin Correlations</span><span class="tags"><span class="tag tag-phys">physics</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> physics
+<span class="kw">let</span> n = <span class="num">8</span>
+<span class="kw">simulate</span> {
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(n)
+    <span class="cm"># Prepare Néel state: |01010101⟩</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n) { <span class="kw">if</span> i%<span class="num">2</span>==<span class="num">1</span> { <span class="gate">X</span>(q[i]) } }
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n-<span class="num">1</span>) {
+        <span class="fn">print</span>(<span class="str">f"⟨Z{i}Z{i+1}⟩ = {expectation_zz(q[i], q[i+1]):.4f}"</span>)
+    }
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#094</span><span class="title">Transverse Field Ising (Critical Point)</span><span class="tags"><span class="tag tag-phys">physics</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> physics
+<span class="kw">for</span> h <span class="kw">in</span> <span class="fn">range_step</span>(<span class="num">0.0</span>, <span class="num">2.0</span>, <span class="num">0.2</span>) {
+    <span class="kw">let</span> model = <span class="fn">ising_model</span>(n_spins=<span class="num">6</span>, J=<span class="num">1.0</span>, h=h)
+    <span class="kw">let</span> e = <span class="fn">ground_state_energy</span>(model)
+    <span class="fn">print</span>(<span class="str">f"h/J={h:.1f}  E={e:.6f}"</span>)
+}
+<span class="fn">print</span>(<span class="str">"Critical point at h/J ≈ 1.0"</span>)</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#095</span><span class="title">Quantum Random Number Generator</span><span class="tags"><span class="tag tag-phys">physics</span><span class="tag tag-quantum">quantum</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">simulate</span> {
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(<span class="num">8</span>)
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">8</span>) { <span class="gate">H</span>(q[i]) }
+    <span class="kw">let</span> bits = <span class="fn">measure_all</span>(q)
+    <span class="fn">print</span>(<span class="str">f"True random byte: {bits}"</span>)
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#096</span><span class="title">Quantum Error Detection</span><span class="tags"><span class="tag tag-phys">physics</span><span class="tag tag-quantum">quantum</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">simulate</span> {
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(<span class="num">5</span>)
+    <span class="cm"># Encode qubit 0 into 3-qubit repetition code</span>
+    <span class="gate">H</span>(q[<span class="num">0</span>])
+    <span class="gate">CNOT</span>(q[<span class="num">0</span>], q[<span class="num">1</span>]); <span class="gate">CNOT</span>(q[<span class="num">0</span>], q[<span class="num">2</span>])
+    <span class="cm"># Simulate bit-flip error on qubit 1</span>
+    <span class="gate">X</span>(q[<span class="num">1</span>])
+    <span class="cm"># Syndrome measurement</span>
+    <span class="gate">CNOT</span>(q[<span class="num">0</span>], q[<span class="num">3</span>]); <span class="gate">CNOT</span>(q[<span class="num">1</span>], q[<span class="num">3</span>])
+    <span class="gate">CNOT</span>(q[<span class="num">1</span>], q[<span class="num">4</span>]); <span class="gate">CNOT</span>(q[<span class="num">2</span>], q[<span class="num">4</span>])
+    <span class="fn">print</span>(<span class="fn">measure_all</span>(q, shots=<span class="num">100</span>))
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#097</span><span class="title">Quantum Entanglement Entropy</span><span class="tags"><span class="tag tag-phys">physics</span><span class="tag tag-quantum">quantum</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">simulate</span> {
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(<span class="num">4</span>)
+    <span class="gate">H</span>(q[<span class="num">0</span>]); <span class="gate">CNOT</span>(q[<span class="num">0</span>],q[<span class="num">1</span>])  <span class="cm"># Entangle 0,1</span>
+    <span class="kw">let</span> ent = <span class="fn">entanglement_entropy</span>(q, [<span class="num">0</span>,<span class="num">1</span>])
+    <span class="fn">print</span>(<span class="str">f"Entanglement entropy: {ent:.4f}"</span>)
+}</code></pre></div></div>
+</div>
+
+<div class="cat" id="gen"><div class="cat-title">Genetics <span class="badge">5 programs</span></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#098</span><span class="title">CRISPR Guide RNA Design</span><span class="tags"><span class="tag tag-gen">genetics</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> genetics
+<span class="kw">let</span> brca1 = <span class="fn">load_sequence</span>(<span class="str">"BRCA1_exon.fasta"</span>)
+<span class="kw">let</span> guides = <span class="fn">design_crispr_guides</span>(target=brca1, cas9=<span class="str">"SpCas9"</span>, top_n=<span class="num">5</span>)
+<span class="kw">for</span> (i, g) <span class="kw">in</span> <span class="fn">enumerate</span>(guides) {
+    <span class="fn">print</span>(<span class="str">f"  {i+1}. {g.sequence} on={g.on_target:.3f} off={g.off_targets}"</span>)
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#099</span><span class="title">GWAS — SNP Association</span><span class="tags"><span class="tag tag-gen">genetics</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> genetics.gwas <span class="kw">as</span> gwas
+<span class="kw">let</span> geno = <span class="fn">load_genotype_data</span>(<span class="str">"cohort.vcf"</span>)
+<span class="kw">let</span> pheno = <span class="fn">load_phenotype_data</span>(<span class="str">"height.csv"</span>)
+<span class="kw">let</span> results = <span class="fn">run_gwas</span>(geno, pheno)
+<span class="kw">for</span> hit <span class="kw">in</span> results {
+    <span class="kw">if</span> hit.significant {
+        <span class="fn">print</span>(<span class="str">f"  {hit.snp_id} p={hit.p_value:.2e} β={hit.effect:.4f}"</span>)
+    }
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#100</span><span class="title">Polygenic Risk Score</span><span class="tags"><span class="tag tag-gen">genetics</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> genetics
+<span class="kw">let</span> effects = [<span class="num">0.3</span>, <span class="num">-0.1</span>, <span class="num">0.5</span>, <span class="num">0.2</span>, <span class="num">-0.4</span>]
+<span class="kw">let</span> genotypes = [<span class="num">1</span>, <span class="num">0</span>, <span class="num">2</span>, <span class="num">1</span>, <span class="num">0</span>]
+<span class="kw">let</span> prs = <span class="fn">polygenic_risk_score</span>(genotypes, effects)
+<span class="fn">print</span>(<span class="str">f"PRS: {prs:.4f}"</span>)</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#101</span><span class="title">Quantum Guide RNA Scoring</span><span class="tags"><span class="tag tag-gen">genetics</span><span class="tag tag-quantum">quantum</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> genetics
+<span class="kw">let</span> gene = <span class="fn">load_gene</span>(<span class="str">"TP53"</span>, genome=<span class="str">"hg38"</span>)
+<span class="kw">let</span> guides = <span class="fn">find_crispr_guides</span>(gene, cas9=<span class="str">"SpCas9"</span>, guide_len=<span class="num">20</span>)
+<span class="kw">let</span> top = <span class="fn">quantum_score_guides</span>(guides, genome=<span class="str">"hg38"</span>, top_k=<span class="num">3</span>)
+<span class="kw">for</span> (i, g) <span class="kw">in</span> <span class="fn">enumerate</span>(top) {
+    <span class="fn">print</span>(<span class="str">f"  {i+1}. {g.sequence} efficiency={g.efficiency:.1%}"</span>)
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#102</span><span class="title">Variant Calling Pipeline</span><span class="tags"><span class="tag tag-gen">genetics</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> genetics
+<span class="kw">let</span> sample = <span class="fn">load_genotype_data</span>(<span class="str">"patient.vcf"</span>)
+<span class="kw">let</span> variants = sample.<span class="fn">call_variants</span>()
+<span class="fn">print</span>(<span class="str">f"Total variants: {len(variants)}"</span>)
+<span class="kw">let</span> pathogenic = <span class="fn">filter</span>(<span class="kw">fn</span>(v) => v.clinical == <span class="str">"pathogenic"</span>, variants)
+<span class="fn">print</span>(<span class="str">f"Pathogenic: {len(pathogenic)}"</span>)</code></pre></div></div>
+</div>
+
+<div class="cat" id="ml"><div class="cat-title">Machine Learning <span class="badge">5 programs</span></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#103</span><span class="title">Quantum Neural Network (XOR)</span><span class="tags"><span class="tag tag-ml">ML</span><span class="tag tag-quantum">quantum</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> ml
+<span class="kw">let</span> x = [[<span class="num">0</span>,<span class="num">0</span>],[<span class="num">0</span>,<span class="num">1</span>],[<span class="num">1</span>,<span class="num">0</span>],[<span class="num">1</span>,<span class="num">1</span>]]
+<span class="kw">let</span> y = [<span class="num">0</span>, <span class="num">1</span>, <span class="num">1</span>, <span class="num">0</span>]
+<span class="kw">simulate</span> {
+    <span class="kw">let</span> qnn = <span class="fn">quantum_neural_net</span>(n_qubits=<span class="num">2</span>, n_layers=<span class="num">4</span>, encoding=<span class="str">"angle"</span>, lr=<span class="num">0.01</span>)
+    <span class="kw">let</span> history = qnn.<span class="fn">train</span>(x, y, epochs=<span class="num">100</span>)
+    <span class="fn">print</span>(<span class="str">f"Final loss: {history[-1]:.4f}"</span>)
+    <span class="fn">print</span>(<span class="str">f"Accuracy: {accuracy(qnn.predict(x), y):.0%}"</span>)
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#104</span><span class="title">Quantum SVM</span><span class="tags"><span class="tag tag-ml">ML</span><span class="tag tag-quantum">quantum</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> ml
+<span class="kw">simulate</span> {
+    <span class="kw">let</span> qsvm = <span class="fn">quantum_svm</span>(kernel=<span class="str">"ZZFeatureMap"</span>, C=<span class="num">1.0</span>)
+    qsvm.<span class="fn">fit</span>(x_train, y_train)
+    <span class="kw">let</span> preds = qsvm.<span class="fn">predict</span>(x_test)
+    <span class="fn">print</span>(<span class="str">f"Accuracy: {accuracy(preds, y_test):.2%}"</span>)
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#105</span><span class="title">Quantum PCA</span><span class="tags"><span class="tag tag-ml">ML</span><span class="tag tag-quantum">quantum</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> ml
+<span class="kw">simulate</span> {
+    <span class="kw">let</span> qpca = <span class="fn">quantum_pca</span>(n_components=<span class="num">2</span>)
+    <span class="kw">let</span> reduced = qpca.<span class="fn">fit_transform</span>(data)
+    <span class="fn">print</span>(<span class="str">f"Variance: {qpca.explained_variance_ratio()}"</span>)
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#106</span><span class="title">Amplitude Encoding</span><span class="tags"><span class="tag tag-ml">ML</span><span class="tag tag-quantum">quantum</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">simulate</span> {
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(<span class="num">4</span>)
+    <span class="kw">let</span> features = [<span class="num">0.5</span>, <span class="num">0.3</span>, <span class="num">0.8</span>, <span class="num">0.1</span>]
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">4</span>) {
+        <span class="gate">Ry</span>(q[i], features[i] * PI)
+    }
+    <span class="fn">print</span>(<span class="fn">probabilities</span>(q))
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#107</span><span class="title">QNN Training Loop</span><span class="tags"><span class="tag tag-ml">ML</span><span class="tag tag-quantum">quantum</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> ml
+<span class="kw">simulate</span>(engine=<span class="str">"chunked"</span>) {
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(<span class="num">8</span>)
+    <span class="kw">let</span> params = <span class="fn">random_params</span>(<span class="num">32</span>)
+    <span class="kw">for</span> epoch <span class="kw">in</span> <span class="fn">range</span>(<span class="num">50</span>) {
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">8</span>) { <span class="gate">Ry</span>(q[i], params[i]) }
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">7</span>) { <span class="gate">CNOT</span>(q[i], q[i+<span class="num">1</span>]) }
+        <span class="kw">let</span> loss = <span class="fn">expectation_z</span>(q[<span class="num">0</span>])
+        <span class="fn">print</span>(<span class="str">f"Epoch {epoch}: loss={loss:.4f}"</span>)
+    }
+}</code></pre></div></div>
+</div>
+
+<div class="cat" id="large"><div class="cat-title">Large Scale (100+ Qubits) <span class="badge">5 programs</span></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#108</span><span class="title">100-Qubit GHZ State</span><span class="tags"><span class="tag tag-quantum">quantum</span></span><span class="arrow">▾</span></div><div class="prog-body"><div class="prog-desc">100 entangled qubits stored in ~100 bytes of memory using the sparse engine.</div><pre><code><span class="kw">simulate</span>(engine=<span class="str">"chunked"</span>) {
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(<span class="num">100</span>)
+    <span class="gate">H</span>(q[<span class="num">0</span>])
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">99</span>) { <span class="gate">CNOT</span>(q[i], q[i+<span class="num">1</span>]) }
+    <span class="fn">print</span>(<span class="str">f"Non-zero amplitudes: {engine_nnz()}"</span>)  <span class="cm"># Always 2!</span>
+    <span class="fn">print</span>(<span class="fn">measure_all</span>(q, shots=<span class="num">200</span>))
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#109</span><span class="title">50-Qubit QFT</span><span class="tags"><span class="tag tag-quantum">quantum</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">simulate</span>(engine=<span class="str">"chunked"</span>) {
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(<span class="num">50</span>)
+    <span class="gate">H_all</span>(q)
+    <span class="fn">qft</span>(q)
+    <span class="fn">print</span>(<span class="str">f"50-qubit QFT complete. NNZ: {engine_nnz()}"</span>)
+    <span class="kw">for</span> stat <span class="kw">in</span> <span class="fn">chunk_stats</span>(q) {
+        <span class="fn">print</span>(<span class="str">f"  Qubits {stat.offset}..{stat.offset+9}: nnz={stat.nnz}"</span>)
+    }
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#110</span><span class="title">100-Qubit Drug Binding Site</span><span class="tags"><span class="tag tag-quantum">quantum</span><span class="tag tag-med">medical</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> medical
+<span class="kw">let</span> receptor = <span class="fn">load_protein</span>(<span class="str">"ACE2_pocket.pdb"</span>)
+<span class="kw">simulate</span>(engine=<span class="str">"chunked"</span>) {
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(<span class="num">100</span>)
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">50</span>) {
+        <span class="gate">Ry</span>(q[<span class="num">2</span>*i], receptor.residues[i].hydro_angle)
+        <span class="gate">Rz</span>(q[<span class="num">2</span>*i+<span class="num">1</span>], receptor.residues[i].charge_angle)
+    }
+    <span class="kw">for</span> layer <span class="kw">in</span> <span class="fn">range</span>(<span class="num">3</span>) {
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">49</span>) { <span class="gate">RZZ</span>(q[<span class="num">2</span>*i], q[<span class="num">2</span>*(i+<span class="num">1</span>)], <span class="num">0.5</span>) }
+        <span class="gate">Rx_all</span>(q, <span class="num">0.8</span>)
+    }
+    <span class="kw">let</span> top = <span class="fn">top_k</span>(<span class="fn">measure_all</span>(q, shots=<span class="num">10000</span>), k=<span class="num">5</span>)
+    <span class="fn">print</span>(<span class="str">"Top binding sites:"</span>, top)
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#111</span><span class="title">100-Qubit QML Classifier</span><span class="tags"><span class="tag tag-quantum">quantum</span><span class="tag tag-ml">ML</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">import</span> ml
+<span class="kw">simulate</span>(engine=<span class="str">"chunked"</span>) {
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(<span class="num">100</span>)
+    <span class="kw">let</span> params = <span class="fn">random_params</span>(<span class="num">400</span>)
+    <span class="kw">for</span> layer <span class="kw">in</span> <span class="fn">range</span>(<span class="num">4</span>) {
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">100</span>) { <span class="gate">Ry</span>(q[i], params[layer*<span class="num">100</span>+i]) }
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">100</span>) { <span class="gate">CNOT</span>(q[i], q[(i+<span class="num">1</span>)%<span class="num">100</span>]) }
+    }
+    <span class="fn">print</span>(<span class="str">f"100-qubit QNN ready. NNZ: {engine_nnz()}"</span>)
+}</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#112</span><span class="title">Distributed Chunk Statistics</span><span class="tags"><span class="tag tag-quantum">quantum</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">simulate</span>(engine=<span class="str">"chunked"</span>) {
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(<span class="num">60</span>)
+    <span class="gate">H_all</span>(q)
+    <span class="gate">CNOT</span>(q[<span class="num">9</span>], q[<span class="num">10</span>])   <span class="cm"># Cross-chunk gate</span>
+    <span class="gate">CNOT</span>(q[<span class="num">29</span>], q[<span class="num">30</span>])  <span class="cm"># Cross-chunk gate</span>
+    <span class="fn">print</span>(<span class="str">"Chunk statistics:"</span>)
+    <span class="kw">for</span> stat <span class="kw">in</span> <span class="fn">chunk_stats</span>(q) {
+        <span class="fn">print</span>(<span class="str">f"  Qubits {stat.offset}..{stat.offset+stat.size-1}: nnz={stat.nnz}"</span>)
+    }
+}</code></pre></div></div>
+</div>
+
+<div class="cat" id="fileio"><div class="cat-title">File I/O &amp; Utilities <span class="badge">5 programs</span></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#113</span><span class="title">CSV Read &amp; Write</span><span class="tags"><span class="tag tag-io">I/O</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> df = <span class="fn">read_csv</span>(<span class="str">"data.csv"</span>)
+<span class="fn">print</span>(df.<span class="fn">columns</span>())
+<span class="fn">print</span>(df.<span class="fn">n_rows</span>())
+<span class="fn">write_csv</span>(<span class="str">"results.csv"</span>, [
+    {<span class="str">"molecule"</span>:<span class="str">"H2"</span>, <span class="str">"energy"</span>:<span class="num">-1.137</span>, <span class="str">"converged"</span>:<span class="kw">true</span>},
+    {<span class="str">"molecule"</span>:<span class="str">"LiH"</span>, <span class="str">"energy"</span>:<span class="num">-7.882</span>, <span class="str">"converged"</span>:<span class="kw">true</span>},
+])</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#114</span><span class="title">JSON Configuration</span><span class="tags"><span class="tag tag-io">I/O</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> config = <span class="fn">read_json</span>(<span class="str">"config.json"</span>)
+<span class="kw">let</span> shots = config.<span class="fn">get</span>(<span class="str">"shots"</span>, <span class="num">1000</span>)
+<span class="fn">write_json</span>(<span class="str">"results.json"</span>, {
+    <span class="str">"energy"</span>: <span class="num">-1.137</span>,
+    <span class="str">"converged"</span>: <span class="kw">true</span>,
+    <span class="str">"iterations"</span>: <span class="num">42</span>
+}, indent=<span class="num">2</span>)</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#115</span><span class="title">Logging</span><span class="tags"><span class="tag tag-io">I/O</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="fn">set_log_level</span>(<span class="str">"DEBUG"</span>)
+<span class="fn">set_log_file</span>(<span class="str">"experiment.log"</span>)
+<span class="fn">log_info</span>(<span class="str">"Starting VQE calculation"</span>)
+<span class="fn">log_debug</span>(<span class="str">"State vector: 1024 entries"</span>)
+<span class="fn">log_warn</span>(<span class="str">"Basis set may be insufficient"</span>)
+<span class="fn">log_error</span>(<span class="str">"Convergence failed!"</span>)</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#116</span><span class="title">Regular Expressions</span><span class="tags"><span class="tag tag-io">I/O</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> dna = <span class="str">"ATGCGATCGATCG"</span>
+<span class="fn">print</span>(<span class="fn">regex_match</span>(dna, <span class="str">"^ATG"</span>))         <span class="cm"># true</span>
+<span class="kw">let</span> codons = <span class="fn">regex_findall</span>(dna, <span class="str">"[ATGC]{3}"</span>)
+<span class="fn">print</span>(codons)
+<span class="kw">let</span> nums = <span class="fn">extract_numbers</span>(<span class="str">"pH=7.4 T=37.0"</span>)
+<span class="fn">print</span>(nums)  <span class="cm"># [7.4, 37.0]</span></code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#117</span><span class="title">HTTP API Calls</span><span class="tags"><span class="tag tag-io">I/O</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">let</span> response = <span class="fn">http_get</span>(<span class="str">"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/aspirin/JSON"</span>)
+<span class="kw">if</span> response.<span class="fn">is_ok</span>() {
+    <span class="kw">let</span> data = response.<span class="fn">json</span>()
+    <span class="fn">print</span>(<span class="str">"Aspirin data fetched successfully"</span>)
+}</code></pre></div></div>
+</div>
+
+<div class="cat" id="hardware"><div class="cat-title">Hardware Export <span class="badge">3 programs</span></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#118</span><span class="title">Export to OpenQASM</span><span class="tags"><span class="tag tag-quantum">quantum</span><span class="tag tag-io">export</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">circuit</span> <span class="type">BellCircuit</span> {
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(<span class="num">2</span>)
+    <span class="gate">H</span>(q[<span class="num">0</span>]); <span class="gate">CNOT</span>(q[<span class="num">0</span>], q[<span class="num">1</span>])
+    <span class="fn">measure_all</span>(q)
+}
+<span class="type">BellCircuit</span>.<span class="fn">export_qasm</span>(<span class="str">"bell.qasm"</span>)
+<span class="fn">print</span>(<span class="str">"Exported to OpenQASM 2.0"</span>)</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#119</span><span class="title">Export to IBM Quantum</span><span class="tags"><span class="tag tag-quantum">quantum</span><span class="tag tag-io">export</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">circuit</span> <span class="type">VQECircuit</span> {
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(<span class="num">4</span>)
+    <span class="gate">Ry</span>(q[<span class="num">0</span>], <span class="num">0.5</span>); <span class="gate">CNOT</span>(q[<span class="num">0</span>], q[<span class="num">1</span>])
+    <span class="gate">Ry</span>(q[<span class="num">2</span>], <span class="num">0.3</span>); <span class="gate">CNOT</span>(q[<span class="num">2</span>], q[<span class="num">3</span>])
+    <span class="fn">measure_all</span>(q)
+}
+<span class="type">VQECircuit</span>.<span class="fn">export_ibm</span>(<span class="str">"vqe_ibm.json"</span>)
+<span class="fn">print</span>(<span class="str">"Ready for IBM Quantum Cloud"</span>)</code></pre></div></div>
+
+<div class="prog" onclick="this.classList.toggle('open')"><div class="prog-head"><span class="num">#120</span><span class="title">Export to All Backends</span><span class="tags"><span class="tag tag-quantum">quantum</span><span class="tag tag-io">export</span></span><span class="arrow">▾</span></div><div class="prog-body"><pre><code><span class="kw">circuit</span> <span class="type">GHZCircuit</span> {
+    <span class="kw">let</span> q = <span class="fn">quantum_register</span>(<span class="num">3</span>)
+    <span class="gate">H</span>(q[<span class="num">0</span>]); <span class="gate">CNOT</span>(q[<span class="num">0</span>], q[<span class="num">1</span>]); <span class="gate">CNOT</span>(q[<span class="num">1</span>], q[<span class="num">2</span>])
+    <span class="fn">measure_all</span>(q)
+}
+<span class="type">GHZCircuit</span>.<span class="fn">export_qasm</span>(<span class="str">"ghz.qasm"</span>)
+<span class="type">GHZCircuit</span>.<span class="fn">export_ibm</span>(<span class="str">"ghz_ibm.json"</span>)
+<span class="type">GHZCircuit</span>.<span class="fn">export_ionq</span>(<span class="str">"ghz_ionq.json"</span>)
+<span class="type">GHZCircuit</span>.<span class="fn">export_cirq</span>(<span class="str">"ghz_cirq.py"</span>)
+<span class="type">GHZCircuit</span>.<span class="fn">export_braket</span>(<span class="str">"ghz_braket.py"</span>)
+<span class="fn">print</span>(<span class="str">"Exported to 5 hardware backends!"</span>)</code></pre></div></div>
+</div>
+
+</main>
+</div>
+</body>
+</html>

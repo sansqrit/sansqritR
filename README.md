@@ -44,7 +44,7 @@ Existing frameworks (Qiskit, Cirq, PennyLane) require substantial software engin
 
 | Requirement | Minimum | Why |
 |-------------|---------|-----|
-| Rust | 1.75+ | Compiles the engine |
+| Rust | 1.80+ | Compiles the engine |
 | Python 3 | 3.8+ | Generates lookup tables |
 | NumPy | Latest | Used by table generator |
 | RAM | 4 GB (8 recommended) | Quantum sim is memory-intensive |
