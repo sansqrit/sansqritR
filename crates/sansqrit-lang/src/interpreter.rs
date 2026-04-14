@@ -7,8 +7,7 @@
 //! - Science package dispatch
 
 use crate::ast::*;
-use crate::lexer::Span;
-use sansqrit_core::{QuantumEngine, EngineKind, GateKind, GateOp, ExportFormat, CircuitInfo};
+use sansqrit_core::{QuantumEngine, EngineKind, GateKind, GateOp};
 use std::collections::HashMap;
 use std::fmt;
 
@@ -429,8 +428,7 @@ impl Interpreter {
                 let arg = self.eval_expr(left)?;
                 // right should be a function — call it with arg
                 match right.as_ref() {
-                    Expr::Ident(name, span) => {
-                        let call_args = vec![CallArg { name: None, value: Expr::IntLit(0, *span) }];
+                    Expr::Ident(name, _span) => {
                         // Store arg temporarily
                         let saved = self.env.get("__pipe_arg__");
                         self.env.set("__pipe_arg__".into(), arg.clone());
@@ -927,7 +925,7 @@ impl Interpreter {
                 BinOp::GtEq => Ok(Value::Bool(a >= b)),
                 _ => Err(InterpError::type_error("Unsupported operation")),
             },
-            (Value::Float(a), Value::Float(b)) | (Value::Float(a), Value::Int(_)) | (Value::Int(_), Value::Float(b)) => {
+            (Value::Float(_), Value::Float(_)) | (Value::Float(_), Value::Int(_)) | (Value::Int(_), Value::Float(_)) => {
                 let a = left.as_float()?;
                 let b = right.as_float()?;
                 match op {

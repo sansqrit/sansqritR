@@ -530,6 +530,7 @@ mod tests {
 
 // Helper trait for test convenience
 impl GateOp {
+    #[allow(dead_code)]
     fn params_with(mut self, params: Vec<f64>) -> Self {
         self.params = params;
         self

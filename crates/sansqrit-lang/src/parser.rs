@@ -365,7 +365,7 @@ impl Parser {
             // simulate(engine="chunked")
             let mut eng = None;
             while !self.check(&TokenKind::RParen) {
-                let key = self.parse_ident_name()?;
+                let _key = self.parse_ident_name()?;
                 self.expect(&TokenKind::Assign)?;
                 if let TokenKind::StringLit(s) = self.peek().clone() {
                     eng = Some(s);
@@ -698,7 +698,6 @@ impl Parser {
         let mut args = Vec::new();
         while !self.check(&TokenKind::RParen) && !self.at_end() {
             // Check for named arg: name=value
-            let checkpoint = self.pos;
             if let TokenKind::Ident(name) = self.peek().clone() {
                 let saved = self.pos;
                 self.advance();

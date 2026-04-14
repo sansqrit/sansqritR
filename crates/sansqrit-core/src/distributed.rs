@@ -231,7 +231,7 @@ impl DistributedExecutor {
     }
 
     /// Distribute global state back to chunks.
-    fn distribute_global(&mut self, global: &SparseStateVec) {
+    fn distribute_global(&mut self, _global: &SparseStateVec) {
         // Reset all chunks
         for chunk in &mut self.chunks {
             chunk.state = SparseStateVec::new(chunk.n_qubits);

@@ -65,6 +65,7 @@ pub struct GateLookupTable {
     /// Memory-mapped single-qubit gate data.
     single_data: Option<Mmap>,
     /// Memory-mapped two-qubit gate data.
+    #[allow(dead_code)]
     two_data: Option<Mmap>,
     /// In-memory phase table.
     phase_table: Vec<ComplexPair>,

@@ -123,7 +123,6 @@ fn check_file(path: &str) {
         Err(e) => {
             eprintln!("{}:{}: {}", path, e.span, e.msg);
             std::process::exit(1);
-            return;
         }
     };
 
@@ -153,7 +152,7 @@ fn export_qasm(path: &str, format: &str) {
     let mut interp = Interpreter::new();
     let _ = interp.run(&program);
 
-    let fmt = match format {
+    let _fmt = match format {
         "v2" => sansqrit_core::ExportFormat::Qasm2,
         "v3" => sansqrit_core::ExportFormat::Qasm3,
         "ibm" => sansqrit_core::ExportFormat::Ibm,

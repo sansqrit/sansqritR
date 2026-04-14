@@ -1,7 +1,6 @@
 //! Complex number utilities for quantum state amplitudes.
 
 use num_complex::Complex64;
-use std::fmt;
 
 /// Type alias for quantum amplitudes.
 pub type Amplitude = Complex64;

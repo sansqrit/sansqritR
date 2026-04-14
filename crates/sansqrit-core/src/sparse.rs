@@ -4,7 +4,7 @@
 //! the non-zero entries. A 100-qubit GHZ state requires only 2 entries
 //! (~100 bytes) instead of 2^100 × 16 bytes.
 
-use crate::complex::{Amplitude, c_zero, c_one, probability};
+use crate::complex::{Amplitude, c_zero, c_one};
 use dashmap::DashMap;
 use std::collections::HashMap;
 

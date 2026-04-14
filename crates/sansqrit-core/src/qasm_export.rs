@@ -9,7 +9,7 @@
 //! - AWS Braket Python
 
 use crate::gates::{GateKind, GateOp};
-use serde::{Serialize, Deserialize};
+use serde::Serialize;
 use std::fmt::Write;
 
 /// Export format selector.
