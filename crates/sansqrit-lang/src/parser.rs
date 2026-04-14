@@ -820,7 +820,10 @@ impl Parser {
 
     fn parse_ident_name(&mut self) -> Result<String, ParseError> {
         match self.peek().clone() {
-            TokenKind::Ident(name) => { self.advance(); Ok(name) }
+            TokenKind::Ident(name) => {
+                self.advance();
+                Ok(name)
+            }
             _ => Err(ParseError {
                 msg: format!("Expected identifier, got {:?}", self.peek()),
                 span: self.span(),
@@ -893,7 +896,9 @@ mod tests {
     #[test]
     fn test_import() {
         let prog = parse("import chemistry").unwrap();
-        assert!(matches!(&prog.statements[0], Stmt::Import { module, .. } if module[0] == "chemistry"));
+        assert!(
+            matches!(&prog.statements[0], Stmt::Import { module, .. } if module[0] == "chemistry")
+        );
     }
 
     #[test]
