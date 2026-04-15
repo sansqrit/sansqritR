@@ -4,12 +4,14 @@ use crate::lexer::Span;
 
 /// Top-level program.
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub struct Program {
     pub statements: Vec<Stmt>,
 }
 
 /// Statements.
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub enum Stmt {
     /// Variable declaration: `let x = expr` or `const X = expr`
     LetDecl { name: String, mutable: bool, type_ann: Option<String>, value: Option<Expr>, span: Span },
@@ -115,6 +117,7 @@ pub enum Stmt {
 
 /// Expressions.
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub enum Expr {
     /// Integer literal
     IntLit(i64, Span),
@@ -189,6 +192,7 @@ pub enum Expr {
 
 /// Binary operators.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[allow(dead_code)]
 pub enum BinOp {
     Add, Sub, Mul, Div, IntDiv, Mod, Pow,
     Eq, NotEq, Lt, Gt, LtEq, GtEq,
@@ -199,18 +203,21 @@ pub enum BinOp {
 
 /// Unary operators.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[allow(dead_code)]
 pub enum UnaryOp {
     Neg, Not, BitNot,
 }
 
 /// Assignment operators.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[allow(dead_code)]
 pub enum AssignOp {
     Assign, AddAssign, SubAssign, MulAssign, DivAssign,
 }
 
 /// Function parameter.
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub struct Param {
     pub name: String,
     pub type_ann: Option<String>,
@@ -219,6 +226,7 @@ pub struct Param {
 
 /// Call argument (positional or named).
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub struct CallArg {
     pub name: Option<String>,
     pub value: Expr,
@@ -226,6 +234,7 @@ pub struct CallArg {
 
 /// Struct/class field.
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub struct Field {
     pub name: String,
     pub type_ann: Option<String>,
@@ -234,6 +243,7 @@ pub struct Field {
 
 /// Match arm.
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub struct MatchArm {
     pub pattern: Pattern,
     pub body: Vec<Stmt>,
@@ -241,6 +251,7 @@ pub struct MatchArm {
 
 /// Match pattern.
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub enum Pattern {
     Literal(Expr),
     Ident(String),
@@ -252,6 +263,7 @@ pub enum Pattern {
 
 /// Catch clause in try/catch.
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub struct CatchClause {
     pub exception_type: Option<String>,
     pub var_name: Option<String>,
