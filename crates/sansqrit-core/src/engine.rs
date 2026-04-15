@@ -117,6 +117,7 @@ impl QuantumEngine {
 
     // ─── Convenience gate methods ──────────────────────────────────────
 
+    // Single-qubit gates (18)
     pub fn i(&mut self, q: usize)  { self.apply(GateOp::single(GateKind::I, q)); }
     pub fn x(&mut self, q: usize)  { self.apply(GateOp::single(GateKind::X, q)); }
     pub fn y(&mut self, q: usize)  { self.apply(GateOp::single(GateKind::Y, q)); }
@@ -127,6 +128,7 @@ impl QuantumEngine {
     pub fn t(&mut self, q: usize)  { self.apply(GateOp::single(GateKind::T, q)); }
     pub fn tdg(&mut self, q: usize) { self.apply(GateOp::single(GateKind::Tdg, q)); }
     pub fn sx(&mut self, q: usize) { self.apply(GateOp::single(GateKind::SX, q)); }
+    pub fn sxdg(&mut self, q: usize) { self.apply(GateOp::single(GateKind::SXdg, q)); }
 
     pub fn rx(&mut self, q: usize, theta: f64) {
         self.apply(GateOp::single_param(GateKind::Rx, q, theta));
@@ -140,30 +142,91 @@ impl QuantumEngine {
     pub fn phase(&mut self, q: usize, theta: f64) {
         self.apply(GateOp::single_param(GateKind::Phase, q, theta));
     }
+    pub fn u1(&mut self, q: usize, lambda: f64) {
+        self.apply(GateOp::single_param(GateKind::U1, q, lambda));
+    }
+    pub fn u2(&mut self, q: usize, phi: f64, lambda: f64) {
+        self.apply(GateOp { kind: GateKind::U2, qubits: vec![q], params: vec![phi, lambda] });
+    }
     pub fn u3(&mut self, q: usize, theta: f64, phi: f64, lambda: f64) {
         self.apply(GateOp { kind: GateKind::U3, qubits: vec![q], params: vec![theta, phi, lambda] });
     }
 
+    // Two-qubit gates (21)
     pub fn cnot(&mut self, c: usize, t: usize) { self.apply(GateOp::two(GateKind::CNOT, c, t)); }
+    pub fn cx(&mut self, c: usize, t: usize) { self.cnot(c, t); } // alias
     pub fn cz(&mut self, q0: usize, q1: usize) { self.apply(GateOp::two(GateKind::CZ, q0, q1)); }
     pub fn cy(&mut self, c: usize, t: usize) { self.apply(GateOp::two(GateKind::CY, c, t)); }
+    pub fn ch(&mut self, c: usize, t: usize) { self.apply(GateOp::two(GateKind::CH, c, t)); }
+    pub fn csx(&mut self, c: usize, t: usize) { self.apply(GateOp::two(GateKind::CSX, c, t)); }
     pub fn swap(&mut self, q0: usize, q1: usize) { self.apply(GateOp::two(GateKind::SWAP, q0, q1)); }
     pub fn iswap(&mut self, q0: usize, q1: usize) { self.apply(GateOp::two(GateKind::ISWAP, q0, q1)); }
+    pub fn sqrt_swap(&mut self, q0: usize, q1: usize) { self.apply(GateOp::two(GateKind::SqrtSWAP, q0, q1)); }
+    pub fn fswap(&mut self, q0: usize, q1: usize) { self.apply(GateOp::two(GateKind::FSWAP, q0, q1)); }
+    pub fn dcx(&mut self, q0: usize, q1: usize) { self.apply(GateOp::two(GateKind::DCX, q0, q1)); }
+    pub fn crx(&mut self, c: usize, t: usize, theta: f64) {
+        self.apply(GateOp::two_param(GateKind::CRx, c, t, theta));
+    }
+    pub fn cry(&mut self, c: usize, t: usize, theta: f64) {
+        self.apply(GateOp::two_param(GateKind::CRy, c, t, theta));
+    }
     pub fn crz(&mut self, c: usize, t: usize, theta: f64) {
         self.apply(GateOp::two_param(GateKind::CRz, c, t, theta));
     }
     pub fn cp(&mut self, c: usize, t: usize, theta: f64) {
         self.apply(GateOp::two_param(GateKind::CP, c, t, theta));
     }
+    pub fn cu(&mut self, c: usize, t: usize, theta: f64, phi: f64, lambda: f64) {
+        self.apply(GateOp { kind: GateKind::CU, qubits: vec![c, t], params: vec![theta, phi, lambda] });
+    }
+    pub fn rxx(&mut self, q0: usize, q1: usize, theta: f64) {
+        self.apply(GateOp::two_param(GateKind::RXX, q0, q1, theta));
+    }
+    pub fn ryy(&mut self, q0: usize, q1: usize, theta: f64) {
+        self.apply(GateOp::two_param(GateKind::RYY, q0, q1, theta));
+    }
     pub fn rzz(&mut self, q0: usize, q1: usize, theta: f64) {
         self.apply(GateOp::two_param(GateKind::RZZ, q0, q1, theta));
     }
+    pub fn rzx(&mut self, q0: usize, q1: usize, theta: f64) {
+        self.apply(GateOp::two_param(GateKind::RZX, q0, q1, theta));
+    }
 
+    // Three-qubit gates (3)
     pub fn toffoli(&mut self, c0: usize, c1: usize, t: usize) {
         self.apply(GateOp::three(GateKind::Toffoli, c0, c1, t));
     }
+    pub fn ccx(&mut self, c0: usize, c1: usize, t: usize) { self.toffoli(c0, c1, t); } // alias
     pub fn fredkin(&mut self, c: usize, q1: usize, q2: usize) {
         self.apply(GateOp::three(GateKind::Fredkin, c, q1, q2));
+    }
+    pub fn cswap(&mut self, c: usize, q1: usize, q2: usize) { self.fredkin(c, q1, q2); } // alias
+    pub fn ccz(&mut self, q0: usize, q1: usize, q2: usize) {
+        self.apply(GateOp::three(GateKind::CCZ, q0, q1, q2));
+    }
+
+    // Multi-qubit gates (4)
+    pub fn mcx(&mut self, controls: &[usize], target: usize) {
+        let mut qubits: Vec<usize> = controls.to_vec();
+        qubits.push(target);
+        self.apply(GateOp::multi(GateKind::MCX, qubits));
+    }
+    pub fn mcz(&mut self, qubits: &[usize]) {
+        self.apply(GateOp::multi(GateKind::MCZ, qubits.to_vec()));
+    }
+    pub fn c3x(&mut self, c0: usize, c1: usize, c2: usize, target: usize) {
+        self.apply(GateOp::multi(GateKind::C3X, vec![c0, c1, c2, target]));
+    }
+    pub fn c4x(&mut self, c0: usize, c1: usize, c2: usize, c3: usize, target: usize) {
+        self.apply(GateOp::multi(GateKind::C4X, vec![c0, c1, c2, c3, target]));
+    }
+
+    /// Clone the engine state into a new engine (for VQE gradient evaluation).
+    pub fn clone_state(&self, n_qubits: usize) -> QuantumEngine {
+        let mut new_engine = QuantumEngine::new(n_qubits);
+        new_engine.state = self.state.clone();
+        new_engine.engine_kind = self.engine_kind;
+        new_engine
     }
 
     // ─── Batch operations ─────────────────────────────────────────────

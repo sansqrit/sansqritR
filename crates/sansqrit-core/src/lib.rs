@@ -25,6 +25,8 @@ pub mod engine;
 pub mod measurement;
 pub mod distributed;
 pub mod qasm_export;
+pub mod algorithms;
+pub mod circuits;
 
 // Re-exports for convenience
 pub use complex::{Amplitude, c, c_real, c_imag, c_zero, c_one, c_exp_i};
@@ -35,3 +37,20 @@ pub use engine::{QuantumEngine, EngineKind};
 pub use measurement::MeasurementResult;
 pub use distributed::{DistributedExecutor, DistributedConfig};
 pub use qasm_export::{ExportFormat, CircuitInfo, export_circuit, export_to_file};
+pub use algorithms::{
+    grover_search, grover_search_multi, shor_factor, vqe, vqe_h2,
+    qaoa_maxcut, quantum_phase_estimation, hhl_solve,
+    bernstein_vazirani, simon_algorithm, deutsch_jozsa,
+    quantum_walk_line, quantum_counting, swap_test,
+    teleport, superdense_coding, bb84_qkd,
+    amplitude_estimation, variational_classifier,
+};
+pub use circuits::{
+    create_w_state, create_cluster_state, create_dicke_state, create_cat_state,
+    draper_qft_adder, quantum_multiplier,
+    amplitude_encoding, angle_encoding, basis_encoding,
+    random_circuit,
+    bit_flip_encode, phase_flip_encode, shor_9qubit_encode, steane_7qubit_encode,
+    hardware_efficient_ansatz, uccsd_ansatz,
+    entanglement_swapping,
+};
