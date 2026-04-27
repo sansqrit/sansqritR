@@ -1,0 +1,41 @@
+print("Production execution pipeline")
+
+simulate {
+    let q = quantum_register(4)
+
+    H(q[0])
+    H(q[0])
+    CNOT(q[0], q[3])
+
+    let transpiled = native_transpile("line")
+    print("transpiler passes:", len(transpiled["passes"]))
+    print("inserted swaps:", transpiled["inserted_swaps"])
+    print("cancelled gates:", transpiled["cancelled_gates"])
+
+    let stabilizer = stabilizer_run()
+    print("stabilizer valid:", stabilizer["valid"])
+    print("stabilizer generators:", len(stabilizer["generators"]))
+
+    let mps = mps_run(16)
+    print("mps max bond:", mps["max_observed_bond"])
+
+    let tensor = tensor_network_plan()
+    print("tensor local:", tensor["executable_locally"])
+
+    let provider = submit_provider_job("aws", "arn:aws:braket:::device/quantum-simulator/amazon/sv1", 128, true)
+    print("provider submitted:", provider["submitted"])
+    print("provider dry-run warnings:", len(provider["warnings"]))
+}
+
+let mitigated = mitigate_readout({"0": 900, "1": 100}, 0.9, 0.1, 0.1, 0.9)
+print("mitigated p0:", round(mitigated["probability_dict"]["0"], 4))
+
+let zne_value = zne([1.0, 3.0, 5.0], [0.82, 0.68, 0.54])
+print("zne zero-noise value:", round(zne_value, 4))
+
+let decoded = qec_decode_repetition([1, 1, 0, 1, 0])
+print("logical bit:", decoded["logical_bit"])
+print("corrections:", len(decoded["corrections"]))
+
+let qec = qec_pipeline("surface_code", 9)
+print("qec decoder:", qec["external_decoder"])

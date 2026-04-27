@@ -81,23 +81,57 @@ fn export_qasm2(c: &CircuitInfo) -> String {
             GateKind::Rx => writeln!(out, "rx({}) q[{}];", gate.params[0], gate.qubits[0]).unwrap(),
             GateKind::Ry => writeln!(out, "ry({}) q[{}];", gate.params[0], gate.qubits[0]).unwrap(),
             GateKind::Rz => writeln!(out, "rz({}) q[{}];", gate.params[0], gate.qubits[0]).unwrap(),
-            GateKind::Phase => writeln!(out, "p({}) q[{}];", gate.params[0], gate.qubits[0]).unwrap(),
-            GateKind::U3 => writeln!(out, "u3({},{},{}) q[{}];",
-                gate.params[0], gate.params[1], gate.params[2], gate.qubits[0]).unwrap(),
-            GateKind::CNOT => writeln!(out, "cx q[{}],q[{}];", gate.qubits[0], gate.qubits[1]).unwrap(),
-            GateKind::CZ => writeln!(out, "cz q[{}],q[{}];", gate.qubits[0], gate.qubits[1]).unwrap(),
-            GateKind::CY => writeln!(out, "cy q[{}],q[{}];", gate.qubits[0], gate.qubits[1]).unwrap(),
-            GateKind::SWAP => writeln!(out, "swap q[{}],q[{}];", gate.qubits[0], gate.qubits[1]).unwrap(),
-            GateKind::CRz => writeln!(out, "crz({}) q[{}],q[{}];",
-                gate.params[0], gate.qubits[0], gate.qubits[1]).unwrap(),
-            GateKind::CP => writeln!(out, "cp({}) q[{}],q[{}];",
-                gate.params[0], gate.qubits[0], gate.qubits[1]).unwrap(),
-            GateKind::RZZ => writeln!(out, "rzz({}) q[{}],q[{}];",
-                gate.params[0], gate.qubits[0], gate.qubits[1]).unwrap(),
-            GateKind::Toffoli => writeln!(out, "ccx q[{}],q[{}],q[{}];",
-                gate.qubits[0], gate.qubits[1], gate.qubits[2]).unwrap(),
-            GateKind::Fredkin => writeln!(out, "cswap q[{}],q[{}],q[{}];",
-                gate.qubits[0], gate.qubits[1], gate.qubits[2]).unwrap(),
+            GateKind::Phase => {
+                writeln!(out, "p({}) q[{}];", gate.params[0], gate.qubits[0]).unwrap()
+            }
+            GateKind::U3 => writeln!(
+                out,
+                "u3({},{},{}) q[{}];",
+                gate.params[0], gate.params[1], gate.params[2], gate.qubits[0]
+            )
+            .unwrap(),
+            GateKind::CNOT => {
+                writeln!(out, "cx q[{}],q[{}];", gate.qubits[0], gate.qubits[1]).unwrap()
+            }
+            GateKind::CZ => {
+                writeln!(out, "cz q[{}],q[{}];", gate.qubits[0], gate.qubits[1]).unwrap()
+            }
+            GateKind::CY => {
+                writeln!(out, "cy q[{}],q[{}];", gate.qubits[0], gate.qubits[1]).unwrap()
+            }
+            GateKind::SWAP => {
+                writeln!(out, "swap q[{}],q[{}];", gate.qubits[0], gate.qubits[1]).unwrap()
+            }
+            GateKind::CRz => writeln!(
+                out,
+                "crz({}) q[{}],q[{}];",
+                gate.params[0], gate.qubits[0], gate.qubits[1]
+            )
+            .unwrap(),
+            GateKind::CP => writeln!(
+                out,
+                "cp({}) q[{}],q[{}];",
+                gate.params[0], gate.qubits[0], gate.qubits[1]
+            )
+            .unwrap(),
+            GateKind::RZZ => writeln!(
+                out,
+                "rzz({}) q[{}],q[{}];",
+                gate.params[0], gate.qubits[0], gate.qubits[1]
+            )
+            .unwrap(),
+            GateKind::Toffoli => writeln!(
+                out,
+                "ccx q[{}],q[{}],q[{}];",
+                gate.qubits[0], gate.qubits[1], gate.qubits[2]
+            )
+            .unwrap(),
+            GateKind::Fredkin => writeln!(
+                out,
+                "cswap q[{}],q[{}],q[{}];",
+                gate.qubits[0], gate.qubits[1], gate.qubits[2]
+            )
+            .unwrap(),
             _ => writeln!(out, "// unsupported gate: {:?}", gate.kind).unwrap(),
         }
     }
@@ -167,13 +201,15 @@ fn export_ibm_json(c: &CircuitInfo) -> String {
         params: Vec<f64>,
     }
 
-    let instructions: Vec<IbmInstruction> = c.gates.iter().map(|g| {
-        IbmInstruction {
+    let instructions: Vec<IbmInstruction> = c
+        .gates
+        .iter()
+        .map(|g| IbmInstruction {
             name: g.kind.name().to_lowercase(),
             qubits: g.qubits.clone(),
             params: g.params.clone(),
-        }
-    }).collect();
+        })
+        .collect();
 
     let circuit = IbmCircuit {
         header: IbmHeader {
@@ -204,8 +240,10 @@ fn export_ionq_json(c: &CircuitInfo) -> String {
         rotation: Option<f64>,
     }
 
-    let gates: Vec<IonQGate> = c.gates.iter().map(|g| {
-        match g.kind {
+    let gates: Vec<IonQGate> = c
+        .gates
+        .iter()
+        .map(|g| match g.kind {
             GateKind::CNOT => IonQGate {
                 gate: "cnot".into(),
                 targets: vec![g.qubits[1]],
@@ -224,10 +262,13 @@ fn export_ionq_json(c: &CircuitInfo) -> String {
                 controls: None,
                 rotation: g.params.first().copied(),
             },
-        }
-    }).collect();
+        })
+        .collect();
 
-    let circuit = IonQCircuit { qubits: c.n_qubits, circuit: gates };
+    let circuit = IonQCircuit {
+        qubits: c.n_qubits,
+        circuit: gates,
+    };
     serde_json::to_string_pretty(&circuit).unwrap_or_default()
 }
 
@@ -246,14 +287,34 @@ fn export_cirq_python(c: &CircuitInfo) -> String {
             GateKind::X => format!("circuit.append(cirq.X(qubits[{}]))", gate.qubits[0]),
             GateKind::Y => format!("circuit.append(cirq.Y(qubits[{}]))", gate.qubits[0]),
             GateKind::Z => format!("circuit.append(cirq.Z(qubits[{}]))", gate.qubits[0]),
-            GateKind::CNOT => format!("circuit.append(cirq.CNOT(qubits[{}], qubits[{}]))", gate.qubits[0], gate.qubits[1]),
-            GateKind::CZ => format!("circuit.append(cirq.CZ(qubits[{}], qubits[{}]))", gate.qubits[0], gate.qubits[1]),
-            GateKind::SWAP => format!("circuit.append(cirq.SWAP(qubits[{}], qubits[{}]))", gate.qubits[0], gate.qubits[1]),
-            GateKind::Rx => format!("circuit.append(cirq.rx({}).on(qubits[{}]))", gate.params[0], gate.qubits[0]),
-            GateKind::Ry => format!("circuit.append(cirq.ry({}).on(qubits[{}]))", gate.params[0], gate.qubits[0]),
-            GateKind::Rz => format!("circuit.append(cirq.rz({}).on(qubits[{}]))", gate.params[0], gate.qubits[0]),
-            GateKind::Toffoli => format!("circuit.append(cirq.TOFFOLI(qubits[{}], qubits[{}], qubits[{}]))",
-                gate.qubits[0], gate.qubits[1], gate.qubits[2]),
+            GateKind::CNOT => format!(
+                "circuit.append(cirq.CNOT(qubits[{}], qubits[{}]))",
+                gate.qubits[0], gate.qubits[1]
+            ),
+            GateKind::CZ => format!(
+                "circuit.append(cirq.CZ(qubits[{}], qubits[{}]))",
+                gate.qubits[0], gate.qubits[1]
+            ),
+            GateKind::SWAP => format!(
+                "circuit.append(cirq.SWAP(qubits[{}], qubits[{}]))",
+                gate.qubits[0], gate.qubits[1]
+            ),
+            GateKind::Rx => format!(
+                "circuit.append(cirq.rx({}).on(qubits[{}]))",
+                gate.params[0], gate.qubits[0]
+            ),
+            GateKind::Ry => format!(
+                "circuit.append(cirq.ry({}).on(qubits[{}]))",
+                gate.params[0], gate.qubits[0]
+            ),
+            GateKind::Rz => format!(
+                "circuit.append(cirq.rz({}).on(qubits[{}]))",
+                gate.params[0], gate.qubits[0]
+            ),
+            GateKind::Toffoli => format!(
+                "circuit.append(cirq.TOFFOLI(qubits[{}], qubits[{}], qubits[{}]))",
+                gate.qubits[0], gate.qubits[1], gate.qubits[2]
+            ),
             _ => format!("# Unsupported gate: {:?}", gate.kind),
         };
         writeln!(out, "{}", line).unwrap();
@@ -285,8 +346,10 @@ fn export_braket_python(c: &CircuitInfo) -> String {
             GateKind::Rx => format!("circuit.rx({}, {})", gate.qubits[0], gate.params[0]),
             GateKind::Ry => format!("circuit.ry({}, {})", gate.qubits[0], gate.params[0]),
             GateKind::Rz => format!("circuit.rz({}, {})", gate.qubits[0], gate.params[0]),
-            GateKind::Toffoli => format!("circuit.ccnot({}, {}, {})",
-                gate.qubits[0], gate.qubits[1], gate.qubits[2]),
+            GateKind::Toffoli => format!(
+                "circuit.ccnot({}, {}, {})",
+                gate.qubits[0], gate.qubits[1], gate.qubits[2]
+            ),
             _ => format!("# Unsupported: {:?}", gate.kind),
         };
         writeln!(out, "{}", line).unwrap();
@@ -298,7 +361,11 @@ fn export_braket_python(c: &CircuitInfo) -> String {
 }
 
 /// Write export to a file.
-pub fn export_to_file(circuit: &CircuitInfo, format: ExportFormat, path: &str) -> std::io::Result<()> {
+pub fn export_to_file(
+    circuit: &CircuitInfo,
+    format: ExportFormat,
+    path: &str,
+) -> std::io::Result<()> {
     let content = export_circuit(circuit, format);
     std::fs::write(path, content)
 }

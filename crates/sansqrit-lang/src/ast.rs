@@ -14,10 +14,21 @@ pub struct Program {
 #[allow(dead_code)]
 pub enum Stmt {
     /// Variable declaration: `let x = expr` or `const X = expr`
-    LetDecl { name: String, mutable: bool, type_ann: Option<String>, value: Option<Expr>, span: Span },
+    LetDecl {
+        name: String,
+        mutable: bool,
+        type_ann: Option<String>,
+        value: Option<Expr>,
+        span: Span,
+    },
 
     /// Assignment: `x = expr` or `x += expr`
-    Assign { target: Expr, op: AssignOp, value: Expr, span: Span },
+    Assign {
+        target: Expr,
+        op: AssignOp,
+        value: Expr,
+        span: Span,
+    },
 
     /// Expression statement (function call, etc.)
     ExprStmt { expr: Expr, span: Span },
@@ -50,7 +61,11 @@ pub enum Stmt {
     },
 
     /// Import statement: `import chemistry` or `import biology.alignment as align`
-    Import { module: Vec<String>, alias: Option<String>, span: Span },
+    Import {
+        module: Vec<String>,
+        alias: Option<String>,
+        span: Span,
+    },
 
     /// If/else
     If {
@@ -62,10 +77,19 @@ pub enum Stmt {
     },
 
     /// For loop
-    For { var: String, iter: Expr, body: Vec<Stmt>, span: Span },
+    For {
+        var: String,
+        iter: Expr,
+        body: Vec<Stmt>,
+        span: Span,
+    },
 
     /// While loop
-    While { condition: Expr, body: Vec<Stmt>, span: Span },
+    While {
+        condition: Expr,
+        body: Vec<Stmt>,
+        span: Span,
+    },
 
     /// Loop (infinite)
     Loop { body: Vec<Stmt>, span: Span },
@@ -83,10 +107,18 @@ pub enum Stmt {
     Yield { value: Expr, span: Span },
 
     /// Match
-    Match { expr: Expr, arms: Vec<MatchArm>, span: Span },
+    Match {
+        expr: Expr,
+        arms: Vec<MatchArm>,
+        span: Span,
+    },
 
     /// Simulate block
-    Simulate { engine: Option<String>, body: Vec<Stmt>, span: Span },
+    Simulate {
+        engine: Option<String>,
+        body: Vec<Stmt>,
+        span: Span,
+    },
 
     /// Quantum block (real hardware)
     QuantumBlock { body: Vec<Stmt>, span: Span },
@@ -95,10 +127,18 @@ pub enum Stmt {
     ClassicalBlock { body: Vec<Stmt>, span: Span },
 
     /// Circuit definition
-    CircuitDecl { name: String, body: Vec<Stmt>, span: Span },
+    CircuitDecl {
+        name: String,
+        body: Vec<Stmt>,
+        span: Span,
+    },
 
     /// Molecule definition
-    MoleculeDecl { name: String, fields: Vec<(String, Expr)>, span: Span },
+    MoleculeDecl {
+        name: String,
+        fields: Vec<(String, Expr)>,
+        span: Span,
+    },
 
     /// Try/catch/finally
     TryCatch {
@@ -112,7 +152,11 @@ pub enum Stmt {
     Raise { expr: Expr, span: Span },
 
     /// Decorator
-    Decorator { name: String, args: Vec<Expr>, span: Span },
+    Decorator {
+        name: String,
+        args: Vec<Expr>,
+        span: Span,
+    },
 }
 
 /// Expressions.
@@ -136,25 +180,57 @@ pub enum Expr {
     Ident(String, Span),
 
     /// Binary operation: a + b, a * b, etc.
-    BinOp { left: Box<Expr>, op: BinOp, right: Box<Expr>, span: Span },
+    BinOp {
+        left: Box<Expr>,
+        op: BinOp,
+        right: Box<Expr>,
+        span: Span,
+    },
 
     /// Unary operation: -x, not x
-    UnaryOp { op: UnaryOp, operand: Box<Expr>, span: Span },
+    UnaryOp {
+        op: UnaryOp,
+        operand: Box<Expr>,
+        span: Span,
+    },
 
     /// Function call: f(args)
-    Call { callee: Box<Expr>, args: Vec<CallArg>, span: Span },
+    Call {
+        callee: Box<Expr>,
+        args: Vec<CallArg>,
+        span: Span,
+    },
 
     /// Method call: obj.method(args)
-    MethodCall { object: Box<Expr>, method: String, args: Vec<CallArg>, span: Span },
+    MethodCall {
+        object: Box<Expr>,
+        method: String,
+        args: Vec<CallArg>,
+        span: Span,
+    },
 
     /// Field access: obj.field
-    FieldAccess { object: Box<Expr>, field: String, span: Span },
+    FieldAccess {
+        object: Box<Expr>,
+        field: String,
+        span: Span,
+    },
 
     /// Index access: arr[idx]
-    Index { object: Box<Expr>, index: Box<Expr>, span: Span },
+    Index {
+        object: Box<Expr>,
+        index: Box<Expr>,
+        span: Span,
+    },
 
     /// Slice: arr[start..end]
-    Slice { object: Box<Expr>, start: Option<Box<Expr>>, end: Option<Box<Expr>>, step: Option<Box<Expr>>, span: Span },
+    Slice {
+        object: Box<Expr>,
+        start: Option<Box<Expr>>,
+        end: Option<Box<Expr>>,
+        step: Option<Box<Expr>>,
+        span: Span,
+    },
 
     /// List literal: [1, 2, 3]
     ListLit(Vec<Expr>, Span),
@@ -169,50 +245,103 @@ pub enum Expr {
     TupleLit(Vec<Expr>, Span),
 
     /// Lambda: fn(x) => x * x
-    Lambda { params: Vec<Param>, body: Box<Expr>, span: Span },
+    Lambda {
+        params: Vec<Param>,
+        body: Box<Expr>,
+        span: Span,
+    },
 
     /// List comprehension: [x*x for x in range(10)]
-    ListComp { expr: Box<Expr>, var: String, iter: Box<Expr>, filter: Option<Box<Expr>>, span: Span },
+    ListComp {
+        expr: Box<Expr>,
+        var: String,
+        iter: Box<Expr>,
+        filter: Option<Box<Expr>>,
+        span: Span,
+    },
 
     /// Dict comprehension: {k:v for (k,v) in items}
-    DictComp { key: Box<Expr>, value: Box<Expr>, var: String, iter: Box<Expr>, filter: Option<Box<Expr>>, span: Span },
+    DictComp {
+        key: Box<Expr>,
+        value: Box<Expr>,
+        var: String,
+        iter: Box<Expr>,
+        filter: Option<Box<Expr>>,
+        span: Span,
+    },
 
     /// Pipeline: x |> f |> g
-    Pipeline { left: Box<Expr>, right: Box<Expr>, span: Span },
+    Pipeline {
+        left: Box<Expr>,
+        right: Box<Expr>,
+        span: Span,
+    },
 
     /// Conditional expression: x if cond else y
-    Ternary { condition: Box<Expr>, then_expr: Box<Expr>, else_expr: Box<Expr>, span: Span },
+    Ternary {
+        condition: Box<Expr>,
+        then_expr: Box<Expr>,
+        else_expr: Box<Expr>,
+        span: Span,
+    },
 
     /// Scope resolution: Module::method
     ScopeResolution { path: Vec<String>, span: Span },
 
     /// Struct instantiation: Atom { symbol: "H", number: 1 }
-    StructInit { name: String, fields: Vec<(String, Expr)>, span: Span },
+    StructInit {
+        name: String,
+        fields: Vec<(String, Expr)>,
+        span: Span,
+    },
 }
 
 /// Binary operators.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[allow(dead_code)]
 pub enum BinOp {
-    Add, Sub, Mul, Div, IntDiv, Mod, Pow,
-    Eq, NotEq, Lt, Gt, LtEq, GtEq,
-    And, Or,
-    BitAnd, BitOr, BitXor, ShiftLeft, ShiftRight,
-    In, NotIn,
+    Add,
+    Sub,
+    Mul,
+    Div,
+    IntDiv,
+    Mod,
+    Pow,
+    Eq,
+    NotEq,
+    Lt,
+    Gt,
+    LtEq,
+    GtEq,
+    And,
+    Or,
+    BitAnd,
+    BitOr,
+    BitXor,
+    ShiftLeft,
+    ShiftRight,
+    In,
+    NotIn,
 }
 
 /// Unary operators.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[allow(dead_code)]
 pub enum UnaryOp {
-    Neg, Not, BitNot,
+    Neg,
+    Not,
+    BitNot,
 }
 
 /// Assignment operators.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[allow(dead_code)]
 pub enum AssignOp {
-    Assign, AddAssign, SubAssign, MulAssign, DivAssign,
+    Assign,
+    AddAssign,
+    SubAssign,
+    MulAssign,
+    DivAssign,
 }
 
 /// Function parameter.
@@ -271,20 +400,34 @@ pub struct CatchClause {
 }
 
 impl Expr {
+    #[allow(dead_code)]
     pub fn span(&self) -> Span {
         match self {
-            Expr::IntLit(_, s) | Expr::FloatLit(_, s) | Expr::StringLit(_, s) |
-            Expr::FStringLit(_, s) | Expr::BoolLit(_, s) | Expr::NoneLit(s) |
-            Expr::Ident(_, s) => *s,
-            Expr::BinOp { span, .. } | Expr::UnaryOp { span, .. } |
-            Expr::Call { span, .. } | Expr::MethodCall { span, .. } |
-            Expr::FieldAccess { span, .. } | Expr::Index { span, .. } |
-            Expr::Slice { span, .. } | Expr::ListLit(_, span) |
-            Expr::DictLit(_, span) | Expr::SetLit(_, span) |
-            Expr::TupleLit(_, span) | Expr::Lambda { span, .. } |
-            Expr::ListComp { span, .. } | Expr::DictComp { span, .. } |
-            Expr::Pipeline { span, .. } | Expr::Ternary { span, .. } |
-            Expr::ScopeResolution { span, .. } | Expr::StructInit { span, .. } => *span,
+            Expr::IntLit(_, s)
+            | Expr::FloatLit(_, s)
+            | Expr::StringLit(_, s)
+            | Expr::FStringLit(_, s)
+            | Expr::BoolLit(_, s)
+            | Expr::NoneLit(s)
+            | Expr::Ident(_, s) => *s,
+            Expr::BinOp { span, .. }
+            | Expr::UnaryOp { span, .. }
+            | Expr::Call { span, .. }
+            | Expr::MethodCall { span, .. }
+            | Expr::FieldAccess { span, .. }
+            | Expr::Index { span, .. }
+            | Expr::Slice { span, .. }
+            | Expr::ListLit(_, span)
+            | Expr::DictLit(_, span)
+            | Expr::SetLit(_, span)
+            | Expr::TupleLit(_, span)
+            | Expr::Lambda { span, .. }
+            | Expr::ListComp { span, .. }
+            | Expr::DictComp { span, .. }
+            | Expr::Pipeline { span, .. }
+            | Expr::Ternary { span, .. }
+            | Expr::ScopeResolution { span, .. }
+            | Expr::StructInit { span, .. } => *span,
         }
     }
 }

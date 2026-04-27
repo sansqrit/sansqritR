@@ -87,8 +87,8 @@ impl GateLookupTable {
             return Ok(Self::empty());
         }
 
-        let manifest_json = fs::read_to_string(&manifest_path)
-            .map_err(|e| LookupError::IoError(e.to_string()))?;
+        let manifest_json =
+            fs::read_to_string(&manifest_path).map_err(|e| LookupError::IoError(e.to_string()))?;
         let manifest: LookupManifest = serde_json::from_str(&manifest_json)
             .map_err(|e| LookupError::ParseError(e.to_string()))?;
 
@@ -97,24 +97,23 @@ impl GateLookupTable {
         let phase_path = dir.join("phase_table.bin");
 
         let single_data = if single_path.exists() {
-            let file = fs::File::open(&single_path)
-                .map_err(|e| LookupError::IoError(e.to_string()))?;
+            let file =
+                fs::File::open(&single_path).map_err(|e| LookupError::IoError(e.to_string()))?;
             Some(unsafe { Mmap::map(&file) }.map_err(|e| LookupError::IoError(e.to_string()))?)
         } else {
             None
         };
 
         let two_data = if two_path.exists() {
-            let file = fs::File::open(&two_path)
-                .map_err(|e| LookupError::IoError(e.to_string()))?;
+            let file =
+                fs::File::open(&two_path).map_err(|e| LookupError::IoError(e.to_string()))?;
             Some(unsafe { Mmap::map(&file) }.map_err(|e| LookupError::IoError(e.to_string()))?)
         } else {
             None
         };
 
         let phase_table = if phase_path.exists() {
-            let bytes = fs::read(&phase_path)
-                .map_err(|e| LookupError::IoError(e.to_string()))?;
+            let bytes = fs::read(&phase_path).map_err(|e| LookupError::IoError(e.to_string()))?;
             bytemuck::cast_slice::<u8, ComplexPair>(&bytes).to_vec()
         } else {
             Vec::new()
@@ -178,9 +177,7 @@ impl GateLookupTable {
 
         // Layout: [gate][qubit][state] -> SingleQubitTransition
         let entry_size = std::mem::size_of::<SingleQubitTransition>();
-        let offset = base_offset
-            + qubit * CHUNK_DIM * entry_size
-            + (state as usize) * entry_size;
+        let offset = base_offset + qubit * CHUNK_DIM * entry_size + (state as usize) * entry_size;
 
         if offset + entry_size > data.len() {
             return None;

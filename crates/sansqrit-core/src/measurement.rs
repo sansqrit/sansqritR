@@ -1,7 +1,7 @@
 //! Measurement results and analysis.
 
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use serde::{Serialize, Deserialize};
 
 /// Result of measuring a quantum register with multiple shots.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -26,7 +26,9 @@ impl MeasurementResult {
 
     /// Top-k most probable outcomes.
     pub fn top_k(&self, k: usize) -> Vec<(String, f64)> {
-        let mut sorted: Vec<_> = self.histogram.iter()
+        let mut sorted: Vec<_> = self
+            .histogram
+            .iter()
             .map(|(bs, &count)| (bs.clone(), count as f64 / self.shots as f64))
             .collect();
         sorted.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
@@ -56,8 +58,14 @@ impl MeasurementResult {
         let mut sorted: Vec<_> = self.histogram.iter().collect();
         sorted.sort_by(|a, b| b.1.cmp(a.1));
 
-        let mut out = format!("Measurement Results ({} shots, {} qubits):\n", self.shots, self.n_qubits);
-        out.push_str(&format!("{:<20} {:>8} {:>10}\n", "Outcome", "Count", "Prob"));
+        let mut out = format!(
+            "Measurement Results ({} shots, {} qubits):\n",
+            self.shots, self.n_qubits
+        );
+        out.push_str(&format!(
+            "{:<20} {:>8} {:>10}\n",
+            "Outcome", "Count", "Prob"
+        ));
         out.push_str(&"-".repeat(40));
         out.push('\n');
 
@@ -87,7 +95,11 @@ mod tests {
         let mut hist = HashMap::new();
         hist.insert("00".to_string(), 500);
         hist.insert("11".to_string(), 500);
-        let result = MeasurementResult { histogram: hist, shots: 1000, n_qubits: 2 };
+        let result = MeasurementResult {
+            histogram: hist,
+            shots: 1000,
+            n_qubits: 2,
+        };
         assert!((result.probability("00") - 0.5).abs() < 1e-10);
         assert!((result.probability("01")).abs() < 1e-10);
         assert_eq!(result.n_unique(), 2);

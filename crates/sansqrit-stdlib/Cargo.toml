@@ -4,6 +4,8 @@ description = "Standard library for Sansqrit — collections, algorithms, file I
 version.workspace = true
 edition.workspace = true
 license.workspace = true
+repository.workspace = true
+authors.workspace = true
 
 [dependencies]
 serde = { workspace = true }

@@ -1,0 +1,65 @@
+fn choose_backend(n_qubits) {
+    return plan_backend(n_qubits)
+}
+
+fn explain_backend_for(n_qubits) {
+    return explain_backend(n_qubits)
+}
+
+fn plan_ray_backend(n_qubits) {
+    return ray_plan(n_qubits)
+}
+
+fn plan_dask_backend(n_qubits) {
+    return dask_plan(n_qubits)
+}
+
+fn plan_mpi_backend(n_qubits) {
+    return mpi_plan(n_qubits)
+}
+
+fn plan_gpu_backend(n_qubits) {
+    return plan_gpu(n_qubits)
+}
+
+fn qec_stack_status() {
+    return qec_backend_status()
+}
+
+fn parse_openqasm3(source) {
+    return import_qasm3(source)
+}
+
+fn conformance_targets() {
+    return simulator_conformance_plan()
+}
+
+fn show_industry_backend_summary(n_qubits) {
+    let plan = choose_backend(n_qubits)
+    let gpu = plan_gpu_backend(n_qubits)
+    let qec = qec_stack_status()
+    let ray = plan_ray_backend(n_qubits)
+
+    print("method:", plan["selected_method"])
+    print("runtime:", plan["runtime_engine"])
+    print("gpu:", gpu["component"])
+    print("qec_ready:", qec["production_ready"])
+    print("ray_available:", ray["available"])
+    return plan
+}
+
+show_industry_backend_summary(120)
+
+let qasm = "OPENQASM 3.0;\nqubit[2] q;\nbit[2] c;\nh q[0];\ncx q[0], q[1];\nc[0] = measure q[0];"
+let imported = parse_openqasm3(qasm)
+print("qasm_gates:", imported["n_gates"])
+
+simulate {
+    let q = quantum_register(2)
+    H(q[0])
+    CNOT(q[0], q[1])
+
+    print(explain_backend())
+    let stim = export_stim()
+    print("stim_unsupported:", len(stim["unsupported_gates"]))
+}

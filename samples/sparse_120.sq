@@ -1,0 +1,18 @@
+print("120-qubit sparse local execution")
+
+let plan = sparse_backend_plan(120, 2)
+print("planned runtime:", plan["runtime_engine"])
+print("planned method:", plan["selected_method"])
+
+simulate(engine="sparse") {
+    let q = quantum_register(120)
+
+    H(q[0])
+    CNOT(q[0], q[119])
+
+    print("nnz:", engine_nnz())
+    print(explain_engine())
+
+    let samples = measure_all(shots=20)
+    print(samples)
+}

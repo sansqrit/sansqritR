@@ -1,0 +1,25 @@
+print("Sansqrit backend planner")
+
+let plan = backend_plan(120)
+print("120q runtime:", plan["runtime_engine"])
+print("120q method:", plan["selected_method"])
+print("warnings:", len(plan["warnings"]))
+
+let gpu = cuquantum_plan(48)
+print("GPU component:", gpu["component"])
+
+let qec = qec_status()
+print("QEC production ready:", qec["production_ready"])
+
+let qasm = "OPENQASM 3.0;\nqubit[2] q;\nbit[2] c;\nh q[0];\ncx q[0], q[1];\nc[0] = measure q[0];"
+let imported = qasm3_import(qasm)
+print("QASM3 gates:", imported["n_gates"])
+
+simulate {
+    let q = quantum_register(2)
+    H(q[0])
+    CNOT(q[0], q[1])
+    print(explain_engine())
+    let stim = stim_export()
+    print("Stim unsupported:", len(stim["unsupported_gates"]))
+}

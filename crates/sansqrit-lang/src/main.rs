@@ -8,15 +8,15 @@
 //!   sansqrit new <name>            Create a new project
 //!   sansqrit version               Show version info
 
-mod lexer;
 mod ast;
-mod parser;
 mod interpreter;
+mod lexer;
+mod parser;
 
 use interpreter::Interpreter;
 use std::env;
 use std::fs;
-use std::io::{self, Write, BufRead};
+use std::io::{self, BufRead, Write};
 
 const VERSION: &str = "0.1.0";
 
@@ -129,7 +129,11 @@ fn check_file(path: &str) {
     let mut parser = parser::Parser::new(tokens);
     match parser.parse_program() {
         Ok(program) => {
-            println!("✓ {} — {} statements, no errors", path, program.statements.len());
+            println!(
+                "✓ {} — {} statements, no errors",
+                path,
+                program.statements.len()
+            );
         }
         Err(e) => {
             eprintln!("{}:{}: {}", path, e.span, e.msg);
@@ -160,7 +164,10 @@ fn export_qasm(path: &str, format: &str) {
         "cirq" => sansqrit_core::ExportFormat::Cirq,
         "braket" => sansqrit_core::ExportFormat::Braket,
         _ => {
-            eprintln!("Unknown format: {} (use v2, v3, ibm, ionq, cirq, braket)", format);
+            eprintln!(
+                "Unknown format: {} (use v2, v3, ibm, ionq, cirq, braket)",
+                format
+            );
             std::process::exit(1);
         }
     };
@@ -180,22 +187,34 @@ fn run_repl() {
         io::stdout().flush().unwrap();
 
         let mut line = String::new();
-        if stdin.lock().read_line(&mut line).unwrap() == 0 { break; }
+        if stdin.lock().read_line(&mut line).unwrap() == 0 {
+            break;
+        }
         let line = line.trim();
 
-        if line.is_empty() { continue; }
-        if line == "quit" || line == "exit" { break; }
+        if line.is_empty() {
+            continue;
+        }
+        if line == "quit" || line == "exit" {
+            break;
+        }
 
         let mut lexer = lexer::Lexer::new(line);
         let tokens = match lexer.tokenize() {
             Ok(t) => t,
-            Err(e) => { eprintln!("Error: {}", e); continue; }
+            Err(e) => {
+                eprintln!("Error: {}", e);
+                continue;
+            }
         };
 
         let mut parser = parser::Parser::new(tokens);
         let program = match parser.parse_program() {
             Ok(p) => p,
-            Err(e) => { eprintln!("Error: {}", e); continue; }
+            Err(e) => {
+                eprintln!("Error: {}", e);
+                continue;
+            }
         };
 
         if let Err(e) = interp.run(&program) {
@@ -208,7 +227,8 @@ fn create_project(name: &str) {
     fs::create_dir_all(format!("{}/data/gates", name)).unwrap();
     fs::create_dir_all(format!("{}/samples", name)).unwrap();
 
-    let main_sq = format!(r#"# {name}.sq — Your first Sansqrit program
+    let main_sq = format!(
+        r#"# {name}.sq — Your first Sansqrit program
 # Run: sansqrit run {name}.sq
 
 print("Hello from Sansqrit!")
@@ -220,7 +240,9 @@ simulate {{
     let result = measure_all(q, shots=1000)
     print("Bell state:", result)
 }}
-"#, name = name);
+"#,
+        name = name
+    );
 
     fs::write(format!("{}/main.sq", name), main_sq).unwrap();
     println!("Created project '{}'", name);
@@ -237,7 +259,10 @@ fn print_version() {
 }
 
 fn print_usage() {
-    println!("Sansqrit v{} — Hybrid Classical-Quantum Language for Scientists", VERSION);
+    println!(
+        "Sansqrit v{} — Hybrid Classical-Quantum Language for Scientists",
+        VERSION
+    );
     println!();
     println!("USAGE:");
     println!("  sansqrit run <file.sq>              Run a program");

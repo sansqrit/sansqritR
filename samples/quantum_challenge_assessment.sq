@@ -1,0 +1,21 @@
+fn assess(problem, n_qubits) {
+    let result = quantum_challenge_assessment(problem, n_qubits)
+    print("problem:", problem)
+    print("kind:", result["kind"])
+    print("local:", result["local_feasibility"])
+    print("method:", result["selected_method"])
+    print("sansqrit_ready:", result["sansqrit_ready"])
+    print("shortcomings:", len(result["shortcomings"]))
+    return result
+}
+
+assess("chemistry hamiltonian active-space materials", 120)
+assess("surface code qec decoder", 1000)
+assess("portfolio optimization maxcut qaoa", 100)
+assess("rsa cryptanalysis shor factoring", 2048)
+assess("monte carlo finance amplitude estimation", 120)
+
+let readiness = production_readiness(120)
+print("dense_120_local:", readiness["arbitrary_dense_local_possible"])
+print("local_modes:", len(readiness["local_success_modes"]))
+print("required_work:", len(readiness["required_work"]))

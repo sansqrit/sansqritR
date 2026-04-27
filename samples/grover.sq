@@ -1,8 +1,8 @@
 # grover.sq — Grover's search algorithm
 simulate {
-    let n_qubits = 5
+    let n_qubits = 3
     let q = quantum_register(n_qubits)
-    let target = 13
+    let target = 5
     
     # Uniform superposition
     for i in range(n_qubits) { H(q[i]) }
@@ -14,7 +14,7 @@ simulate {
         for i in range(n_qubits) {
             if ((target >> i) & 1) == 0 { X(q[i]) }
         }
-        # Multi-controlled Z
+        # Three-qubit controlled-Z via H/Toffoli/H
         H(q[n_qubits - 1])
         Toffoli(q[0], q[1], q[2])
         H(q[n_qubits - 1])

@@ -8,7 +8,8 @@
 //! 5. Results are recombined at the coordinator
 
 use crate::complex::*;
-use crate::engine::{QuantumEngine, EngineKind, ChunkStat};
+use crate::engine::{ChunkStat, EngineKind, QuantumEngine};
+use crate::external::{detect_integration, IntegrationKind, IntegrationStatus};
 use crate::gates::*;
 use crate::sparse::SparseStateVec;
 use rayon::prelude::*;
@@ -25,6 +26,16 @@ pub struct DistributedConfig {
     pub use_lookup: bool,
     /// Network addresses of worker nodes (empty = local threads).
     pub worker_addresses: Vec<String>,
+    /// Runtime transport for production distributed execution.
+    pub runtime: DistributedRuntime,
+    /// Batch worker-local gates before communication.
+    pub batch_local_gates: bool,
+    /// Compress sparse state transfers between workers.
+    pub compressed_transfer: bool,
+    /// Optional checkpoint directory.
+    pub checkpoint_dir: Option<String>,
+    /// Keep local sparse/chunked fallback enabled when external runtime fails.
+    pub safe_fallback: bool,
 }
 
 impl Default for DistributedConfig {
@@ -37,6 +48,43 @@ impl Default for DistributedConfig {
             max_workers: n_cpus,
             use_lookup: true,
             worker_addresses: vec![],
+            runtime: DistributedRuntime::LocalThreads,
+            batch_local_gates: true,
+            compressed_transfer: true,
+            checkpoint_dir: None,
+            safe_fallback: true,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+pub enum DistributedRuntime {
+    LocalThreads,
+    Ray,
+    Dask,
+    Mpi,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+pub struct DistributedExecutionPlan {
+    pub runtime: DistributedRuntime,
+    pub available: bool,
+    pub integration: Option<IntegrationStatus>,
+    pub worker_count: usize,
+    pub batch_local_gates: bool,
+    pub compressed_transfer: bool,
+    pub checkpoint_dir: Option<String>,
+    pub safe_fallback: bool,
+    pub notes: Vec<String>,
+}
+
+impl DistributedRuntime {
+    pub fn integration_kind(self) -> Option<IntegrationKind> {
+        match self {
+            DistributedRuntime::LocalThreads => None,
+            DistributedRuntime::Ray => Some(IntegrationKind::Ray),
+            DistributedRuntime::Dask => Some(IntegrationKind::Dask),
+            DistributedRuntime::Mpi => Some(IntegrationKind::Mpi),
         }
     }
 }
@@ -66,9 +114,7 @@ impl QuantumChunk {
 
     /// Map a global qubit index to local chunk index.
     pub fn global_to_local(&self, global_qubit: usize) -> Option<usize> {
-        if global_qubit >= self.global_offset
-            && global_qubit < self.global_offset + self.n_qubits
-        {
+        if global_qubit >= self.global_offset && global_qubit < self.global_offset + self.n_qubits {
             Some(global_qubit - self.global_offset)
         } else {
             None
@@ -77,14 +123,18 @@ impl QuantumChunk {
 
     /// Check if a gate operates entirely within this chunk.
     pub fn is_local_gate(&self, gate: &GateOp) -> bool {
-        gate.qubits.iter().all(|&q| self.global_to_local(q).is_some())
+        gate.qubits
+            .iter()
+            .all(|&q| self.global_to_local(q).is_some())
     }
 
     /// Apply a gate that is local to this chunk.
     pub fn apply_local(&mut self, gate: &GateOp) {
         let local_gate = GateOp {
             kind: gate.kind,
-            qubits: gate.qubits.iter()
+            qubits: gate
+                .qubits
+                .iter()
                 .map(|&q| self.global_to_local(q).unwrap())
                 .collect(),
             params: gate.params.clone(),
@@ -125,6 +175,44 @@ impl DistributedExecutor {
         self.chunks.len()
     }
 
+    /// Validate the requested distributed runtime and return an execution plan.
+    pub fn execution_plan(
+        total_qubits: usize,
+        config: &DistributedConfig,
+    ) -> DistributedExecutionPlan {
+        let mut notes = Vec::new();
+        let integration = config.runtime.integration_kind().map(detect_integration);
+        let available = integration.as_ref().map(|s| s.available).unwrap_or(true);
+
+        if config.batch_local_gates {
+            notes.push("Worker-local gates will be batched before shard exchange.".to_string());
+        }
+        if config.compressed_transfer {
+            notes.push("Sparse/compressed transfer is enabled for state exchange.".to_string());
+        }
+        if total_qubits >= 60 {
+            notes.push("Large dense workloads require external cluster resources; keep sparse fallback enabled.".to_string());
+        }
+        if !available && config.safe_fallback {
+            notes.push(
+                "Requested runtime is unavailable; safe fallback will use local chunked execution."
+                    .to_string(),
+            );
+        }
+
+        DistributedExecutionPlan {
+            runtime: config.runtime,
+            available,
+            integration,
+            worker_count: config.max_workers.max(config.worker_addresses.len()).max(1),
+            batch_local_gates: config.batch_local_gates,
+            compressed_transfer: config.compressed_transfer,
+            checkpoint_dir: config.checkpoint_dir.clone(),
+            safe_fallback: config.safe_fallback,
+            notes,
+        }
+    }
+
     /// Apply a batch of gates, automatically partitioning local vs cross-chunk.
     pub fn apply_gates(&mut self, gates: &[GateOp]) {
         // Separate local and cross-chunk gates
@@ -132,7 +220,9 @@ impl DistributedExecutor {
         let mut cross_chunk_gates: Vec<GateOp> = vec![];
 
         for gate in gates {
-            let chunk_ids: Vec<usize> = gate.qubits.iter()
+            let chunk_ids: Vec<usize> = gate
+                .qubits
+                .iter()
                 .map(|&q| q / self.config.chunk_size)
                 .collect();
 
@@ -144,11 +234,14 @@ impl DistributedExecutor {
         }
 
         // Apply local gates in parallel using Rayon
-        self.chunks.par_iter_mut().enumerate().for_each(|(i, chunk)| {
-            for (_, gate) in &local_batches[i] {
-                chunk.apply_local(gate);
-            }
-        });
+        self.chunks
+            .par_iter_mut()
+            .enumerate()
+            .for_each(|(i, chunk)| {
+                for (_, gate) in &local_batches[i] {
+                    chunk.apply_local(gate);
+                }
+            });
 
         // Apply cross-chunk gates sequentially (requires coordination)
         for gate in &cross_chunk_gates {
@@ -169,10 +262,7 @@ impl DistributedExecutor {
                 // These are the most common cross-chunk gates.
                 // We handle them by operating on the global sparse representation.
                 let global = self.reconstruct_global();
-                let mut engine = QuantumEngine::with_engine(
-                    self.total_qubits,
-                    EngineKind::Sparse,
-                );
+                let mut engine = QuantumEngine::with_engine(self.total_qubits, EngineKind::Sparse);
                 engine.state = global;
                 engine.apply(gate.clone());
                 self.distribute_global(&engine.state);
@@ -180,10 +270,7 @@ impl DistributedExecutor {
             _ => {
                 // Generic fallback
                 let global = self.reconstruct_global();
-                let mut engine = QuantumEngine::with_engine(
-                    self.total_qubits,
-                    EngineKind::Sparse,
-                );
+                let mut engine = QuantumEngine::with_engine(self.total_qubits, EngineKind::Sparse);
                 engine.state = global;
                 engine.apply(gate.clone());
                 self.distribute_global(&engine.state);
@@ -248,11 +335,14 @@ impl DistributedExecutor {
 
     /// Get chunk statistics.
     pub fn stats(&self) -> Vec<ChunkStat> {
-        self.chunks.iter().map(|c| ChunkStat {
-            offset: c.global_offset,
-            size: c.n_qubits,
-            nnz: c.state.nnz(),
-        }).collect()
+        self.chunks
+            .iter()
+            .map(|c| ChunkStat {
+                offset: c.global_offset,
+                size: c.n_qubits,
+                nnz: c.state.nnz(),
+            })
+            .collect()
     }
 
     /// Measure all qubits across all chunks.
@@ -314,11 +404,27 @@ mod tests {
 
     #[test]
     fn test_distributed_executor_creation() {
-        let exec = DistributedExecutor::new(50, DistributedConfig {
-            chunk_size: 10,
-            ..Default::default()
-        });
+        let exec = DistributedExecutor::new(
+            50,
+            DistributedConfig {
+                chunk_size: 10,
+                ..Default::default()
+            },
+        );
         assert_eq!(exec.n_chunks(), 5);
+    }
+
+    #[test]
+    fn test_external_runtime_plan_falls_back_safely() {
+        let config = DistributedConfig {
+            runtime: DistributedRuntime::Ray,
+            max_workers: 4,
+            ..Default::default()
+        };
+        let plan = DistributedExecutor::execution_plan(120, &config);
+        assert_eq!(plan.runtime, DistributedRuntime::Ray);
+        assert!(plan.safe_fallback);
+        assert!(plan.worker_count >= 4);
     }
 
     #[test]

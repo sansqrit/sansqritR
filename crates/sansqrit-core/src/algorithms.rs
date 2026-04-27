@@ -128,7 +128,6 @@ fn grover_diffusion(sv: &mut SparseStateVec, n_qubits: usize) {
         apply_gate(sv, &GateOp::single(GateKind::H, q));
     }
     // Step 2: Flip phase of |0...0⟩
-    let amp = sv.get(0);
     // Apply 2|0⟩⟨0| - I: negate all states except |0⟩, then negate |0⟩ and flip sign
     let entries: Vec<(u128, Amplitude)> = sv.drain();
     for (state, a) in entries {
@@ -412,12 +411,12 @@ pub fn vqe_h2(bond_length: f64, max_iter: usize) -> VqeResult {
     let g5 = 0.1714;
 
     let hamiltonian = vec![
-        (g0, vec![]),                     // constant
-        (g1, vec![(0, 'Z')]),             // Z0
-        (g2, vec![(1, 'Z')]),             // Z1
-        (g3, vec![(0, 'Z'), (1, 'Z')]),   // Z0Z1
-        (g4, vec![(0, 'X'), (1, 'X')]),   // X0X1
-        (g5, vec![(0, 'Y'), (1, 'Y')]),   // Y0Y1
+        (g0, vec![]),                   // constant
+        (g1, vec![(0, 'Z')]),           // Z0
+        (g2, vec![(1, 'Z')]),           // Z1
+        (g3, vec![(0, 'Z'), (1, 'Z')]), // Z0Z1
+        (g4, vec![(0, 'X'), (1, 'X')]), // X0X1
+        (g5, vec![(0, 'Y'), (1, 'Y')]), // Y0Y1
     ];
 
     vqe(2, &hamiltonian, 2, max_iter, 1e-8)
@@ -495,7 +494,11 @@ pub fn qaoa_maxcut(
 }
 
 fn evaluate_maxcut_cost(bitstring: &str, edges: &[(usize, usize)]) -> f64 {
-    let bits: Vec<u8> = bitstring.chars().rev().map(|c| if c == '1' { 1 } else { 0 }).collect();
+    let bits: Vec<u8> = bitstring
+        .chars()
+        .rev()
+        .map(|c| if c == '1' { 1 } else { 0 })
+        .collect();
     let mut cost = 0.0;
     for &(i, j) in edges {
         if i < bits.len() && j < bits.len() && bits[i] != bits[j] {
@@ -766,7 +769,11 @@ pub fn quantum_walk_line(n_positions: usize, n_steps: usize, shots: usize) -> Me
 // ═══════════════════════════════════════════════════════════════════════
 
 /// Estimate the number of solutions to a search problem using QPE on Grover's operator.
-pub fn quantum_counting(n_search_bits: usize, n_counting_bits: usize, n_solutions: usize) -> QaeResult {
+pub fn quantum_counting(
+    n_search_bits: usize,
+    n_counting_bits: usize,
+    n_solutions: usize,
+) -> QaeResult {
     let n = (1u64 << n_search_bits) as f64;
     let m = n_solutions as f64;
 
@@ -789,13 +796,25 @@ pub fn quantum_counting(n_search_bits: usize, n_counting_bits: usize, n_solution
 // ═══════════════════════════════════════════════════════════════════════
 
 /// SWAP test: estimate |⟨ψ|φ⟩|² using one ancilla qubit.
-pub fn swap_test(engine1: &QuantumEngine, engine2: &QuantumEngine, shots: usize) -> f64 {
+pub fn swap_test(engine1: &QuantumEngine, engine2: &QuantumEngine, _shots: usize) -> f64 {
     let n = engine1.n_qubits();
+    assert_eq!(n, engine2.n_qubits(), "SWAP test needs equal-size states");
     let total = 2 * n + 1; // ancilla + register1 + register2
+    assert!(
+        total <= 128,
+        "SWAP test state indices are limited to 128 qubits"
+    );
     let mut engine = QuantumEngine::new(total);
 
-    // Prepare states (simplified: just run the same gates)
-    // In practice, states would be prepared by copying
+    // Prepare |0>_a |psi> |phi> from the two input sparse states.
+    engine.state.drain();
+    for (&idx1, &amp1) in engine1.state.iter() {
+        for (&idx2, &amp2) in engine2.state.iter() {
+            let combined = embed_register(idx1, n, 1) | embed_register(idx2, n, n + 1);
+            engine.state.add_to(combined, amp1 * amp2);
+        }
+    }
+    engine.state.normalize();
 
     // Ancilla = qubit 0
     engine.h(0); // Hadamard on ancilla
@@ -807,11 +826,25 @@ pub fn swap_test(engine1: &QuantumEngine, engine2: &QuantumEngine, shots: usize)
 
     engine.h(0); // Hadamard on ancilla
 
-    // Measure ancilla
-    let result = engine.measure_all(shots);
-    let p0 = result.probability(&"0".repeat(total));
+    // Exact ancilla-0 probability avoids bitstring-endianness mistakes.
+    let p0: f64 = engine
+        .state
+        .iter()
+        .filter(|(&idx, _)| SparseStateVec::bit_of(idx, 0) == 0)
+        .map(|(_, amp)| amp.norm_sqr())
+        .sum();
     // |⟨ψ|φ⟩|² = 2*P(0) - 1
-    (2.0 * p0 - 1.0).max(0.0)
+    (2.0 * p0 - 1.0).clamp(0.0, 1.0)
+}
+
+fn embed_register(index: u128, width: usize, offset: usize) -> u128 {
+    let mut out = 0u128;
+    for bit in 0..width {
+        if SparseStateVec::bit_of(index, bit) == 1 {
+            out |= 1u128 << (offset + bit);
+        }
+    }
+    out
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -941,6 +974,11 @@ pub fn bb84_qkd(key_length: usize) -> (Vec<u8>, Vec<u8>, f64) {
 
 /// Quantum Amplitude Estimation: estimate the probability of a marked state.
 pub fn amplitude_estimation(n_qubits: usize, n_eval_bits: usize, target: u64) -> QaeResult {
+    assert!(n_qubits < 64, "Amplitude estimation uses u64 basis indices");
+    assert!(
+        target < (1u64 << n_qubits),
+        "Target state is outside the register"
+    );
     let n = (1u64 << n_qubits) as f64;
     // Theoretical amplitude: if target is one state out of N, amplitude = 1/√N
     let true_amplitude = 1.0 / n.sqrt();
@@ -976,7 +1014,7 @@ pub fn variational_classifier(
     let mut best_accuracy = 0.0;
 
     for _epoch in 0..epochs {
-        let mut total_loss = 0.0;
+        let mut _total_loss = 0.0;
         let mut correct = 0;
 
         for (features, label) in training_data {
@@ -988,7 +1026,7 @@ pub fn variational_classifier(
             }
 
             let target = *label as f64;
-            total_loss += (prediction - target).powi(2);
+            _total_loss += (prediction - target).powi(2);
 
             // Simple gradient descent on params
             for i in 0..n_params {
@@ -1096,10 +1134,35 @@ mod tests {
     }
 
     #[test]
+    fn test_swap_test_identical_states() {
+        let mut left = QuantumEngine::new(1);
+        let mut right = QuantumEngine::new(1);
+        left.h(0);
+        right.h(0);
+
+        let fidelity = swap_test(&left, &right, 1000);
+        assert!((fidelity - 1.0).abs() < 1e-10);
+    }
+
+    #[test]
+    fn test_swap_test_orthogonal_states() {
+        let left = QuantumEngine::new(1);
+        let mut right = QuantumEngine::new(1);
+        right.x(0);
+
+        let fidelity = swap_test(&left, &right, 1000);
+        assert!(fidelity < 1e-10);
+    }
+
+    #[test]
     fn test_vqe_h2() {
         let result = vqe_h2(0.74, 200);
         // H2 ground state energy is ~-1.137 Ha; with limited ansatz we accept any negative energy
-        assert!(result.energy < -0.3, "VQE energy too high: {}", result.energy);
+        assert!(
+            result.energy < -0.3,
+            "VQE energy too high: {}",
+            result.energy
+        );
     }
 
     #[test]
@@ -1107,7 +1170,11 @@ mod tests {
         let (alice, bob, error_rate) = bb84_qkd(100);
         assert_eq!(alice.len(), 100);
         assert_eq!(bob.len(), 100);
-        assert!(error_rate < 0.01, "Error rate too high without eavesdropper: {}", error_rate);
+        assert!(
+            error_rate < 0.01,
+            "Error rate too high without eavesdropper: {}",
+            error_rate
+        );
     }
 
     #[test]

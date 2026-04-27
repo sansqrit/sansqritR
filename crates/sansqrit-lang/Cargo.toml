@@ -12,8 +12,8 @@ name = "sansqrit"
 path = "src/main.rs"
 
 [dependencies]
-sansqrit-core = { path = "../sansqrit-core" }
-sansqrit-stdlib = { path = "../sansqrit-stdlib" }
+sansqrit-core = { path = "../sansqrit-core", version = "0.1.0" }
+sansqrit-stdlib = { path = "../sansqrit-stdlib", version = "0.1.0" }
 num-complex = { workspace = true }
 rand = { workspace = true }
 serde = { workspace = true }

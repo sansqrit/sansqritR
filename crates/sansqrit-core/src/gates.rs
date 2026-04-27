@@ -11,65 +11,158 @@ use std::f64::consts::PI;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum GateKind {
     // Single-qubit (18 total)
-    I, X, Y, Z, H, S, Sdg, T, Tdg, SX, SXdg,
-    Rx, Ry, Rz, Phase, U1, U2, U3,
+    I,
+    X,
+    Y,
+    Z,
+    H,
+    S,
+    Sdg,
+    T,
+    Tdg,
+    SX,
+    SXdg,
+    Rx,
+    Ry,
+    Rz,
+    Phase,
+    U1,
+    U2,
+    U3,
     // Two-qubit (21 total)
-    CNOT, CZ, CY, CH, CSX, SWAP, ISWAP, SqrtSWAP, FSWAP, DCX,
-    CRx, CRy, CRz, CP, CU,
-    RXX, RYY, RZZ, RZX,
-    ECR, MS,
+    CNOT,
+    CZ,
+    CY,
+    CH,
+    CSX,
+    SWAP,
+    ISWAP,
+    SqrtSWAP,
+    FSWAP,
+    DCX,
+    CRx,
+    CRy,
+    CRz,
+    CP,
+    CU,
+    RXX,
+    RYY,
+    RZZ,
+    RZX,
+    ECR,
+    MS,
     // Three-qubit (3 total)
-    Toffoli, Fredkin, CCZ,
+    Toffoli,
+    Fredkin,
+    CCZ,
     // Multi-qubit (4 total)
-    MCX, MCZ, C3X, C4X,
+    MCX,
+    MCZ,
+    C3X,
+    C4X,
 }
 
 impl GateKind {
     pub fn name(&self) -> &'static str {
         match self {
-            GateKind::I => "I", GateKind::X => "X", GateKind::Y => "Y",
-            GateKind::Z => "Z", GateKind::H => "H", GateKind::S => "S",
-            GateKind::Sdg => "Sdg", GateKind::T => "T", GateKind::Tdg => "Tdg",
-            GateKind::SX => "SX", GateKind::SXdg => "SXdg",
-            GateKind::Rx => "Rx", GateKind::Ry => "Ry",
-            GateKind::Rz => "Rz", GateKind::Phase => "Phase",
-            GateKind::U1 => "U1", GateKind::U2 => "U2", GateKind::U3 => "U3",
-            GateKind::CNOT => "CNOT", GateKind::CZ => "CZ", GateKind::CY => "CY",
-            GateKind::CH => "CH", GateKind::CSX => "CSX",
-            GateKind::SWAP => "SWAP", GateKind::ISWAP => "iSWAP",
-            GateKind::SqrtSWAP => "SqrtSWAP", GateKind::FSWAP => "fSWAP",
+            GateKind::I => "I",
+            GateKind::X => "X",
+            GateKind::Y => "Y",
+            GateKind::Z => "Z",
+            GateKind::H => "H",
+            GateKind::S => "S",
+            GateKind::Sdg => "Sdg",
+            GateKind::T => "T",
+            GateKind::Tdg => "Tdg",
+            GateKind::SX => "SX",
+            GateKind::SXdg => "SXdg",
+            GateKind::Rx => "Rx",
+            GateKind::Ry => "Ry",
+            GateKind::Rz => "Rz",
+            GateKind::Phase => "Phase",
+            GateKind::U1 => "U1",
+            GateKind::U2 => "U2",
+            GateKind::U3 => "U3",
+            GateKind::CNOT => "CNOT",
+            GateKind::CZ => "CZ",
+            GateKind::CY => "CY",
+            GateKind::CH => "CH",
+            GateKind::CSX => "CSX",
+            GateKind::SWAP => "SWAP",
+            GateKind::ISWAP => "iSWAP",
+            GateKind::SqrtSWAP => "SqrtSWAP",
+            GateKind::FSWAP => "fSWAP",
             GateKind::DCX => "DCX",
-            GateKind::CRx => "CRx", GateKind::CRy => "CRy",
-            GateKind::CRz => "CRz", GateKind::CP => "CP", GateKind::CU => "CU",
-            GateKind::RXX => "RXX", GateKind::RYY => "RYY",
-            GateKind::RZZ => "RZZ", GateKind::RZX => "RZX",
-            GateKind::ECR => "ECR", GateKind::MS => "MS",
-            GateKind::Toffoli => "Toffoli", GateKind::Fredkin => "Fredkin",
+            GateKind::CRx => "CRx",
+            GateKind::CRy => "CRy",
+            GateKind::CRz => "CRz",
+            GateKind::CP => "CP",
+            GateKind::CU => "CU",
+            GateKind::RXX => "RXX",
+            GateKind::RYY => "RYY",
+            GateKind::RZZ => "RZZ",
+            GateKind::RZX => "RZX",
+            GateKind::ECR => "ECR",
+            GateKind::MS => "MS",
+            GateKind::Toffoli => "Toffoli",
+            GateKind::Fredkin => "Fredkin",
             GateKind::CCZ => "CCZ",
-            GateKind::MCX => "MCX", GateKind::MCZ => "MCZ",
-            GateKind::C3X => "C3X", GateKind::C4X => "C4X",
+            GateKind::MCX => "MCX",
+            GateKind::MCZ => "MCZ",
+            GateKind::C3X => "C3X",
+            GateKind::C4X => "C4X",
         }
     }
 
     pub fn is_single(&self) -> bool {
-        matches!(self, GateKind::I | GateKind::X | GateKind::Y | GateKind::Z |
-                 GateKind::H | GateKind::S | GateKind::Sdg | GateKind::T |
-                 GateKind::Tdg | GateKind::SX | GateKind::SXdg |
-                 GateKind::Rx | GateKind::Ry | GateKind::Rz |
-                 GateKind::Phase | GateKind::U1 | GateKind::U2 | GateKind::U3)
+        matches!(
+            self,
+            GateKind::I
+                | GateKind::X
+                | GateKind::Y
+                | GateKind::Z
+                | GateKind::H
+                | GateKind::S
+                | GateKind::Sdg
+                | GateKind::T
+                | GateKind::Tdg
+                | GateKind::SX
+                | GateKind::SXdg
+                | GateKind::Rx
+                | GateKind::Ry
+                | GateKind::Rz
+                | GateKind::Phase
+                | GateKind::U1
+                | GateKind::U2
+                | GateKind::U3
+        )
     }
 
     pub fn is_parametric(&self) -> bool {
-        matches!(self, GateKind::Rx | GateKind::Ry | GateKind::Rz |
-                 GateKind::Phase | GateKind::U1 | GateKind::U2 | GateKind::U3 |
-                 GateKind::CRx | GateKind::CRy | GateKind::CRz |
-                 GateKind::CP | GateKind::CU |
-                 GateKind::RXX | GateKind::RYY | GateKind::RZZ | GateKind::RZX)
+        matches!(
+            self,
+            GateKind::Rx
+                | GateKind::Ry
+                | GateKind::Rz
+                | GateKind::Phase
+                | GateKind::U1
+                | GateKind::U2
+                | GateKind::U3
+                | GateKind::CRx
+                | GateKind::CRy
+                | GateKind::CRz
+                | GateKind::CP
+                | GateKind::CU
+                | GateKind::RXX
+                | GateKind::RYY
+                | GateKind::RZZ
+                | GateKind::RZX
+        )
     }
 }
 
 /// A gate operation to be applied.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
 pub struct GateOp {
     pub kind: GateKind,
     pub qubits: Vec<usize>,
@@ -78,27 +171,51 @@ pub struct GateOp {
 
 impl GateOp {
     pub fn single(kind: GateKind, qubit: usize) -> Self {
-        GateOp { kind, qubits: vec![qubit], params: vec![] }
+        GateOp {
+            kind,
+            qubits: vec![qubit],
+            params: vec![],
+        }
     }
 
     pub fn single_param(kind: GateKind, qubit: usize, theta: f64) -> Self {
-        GateOp { kind, qubits: vec![qubit], params: vec![theta] }
+        GateOp {
+            kind,
+            qubits: vec![qubit],
+            params: vec![theta],
+        }
     }
 
     pub fn two(kind: GateKind, q0: usize, q1: usize) -> Self {
-        GateOp { kind, qubits: vec![q0, q1], params: vec![] }
+        GateOp {
+            kind,
+            qubits: vec![q0, q1],
+            params: vec![],
+        }
     }
 
     pub fn two_param(kind: GateKind, q0: usize, q1: usize, theta: f64) -> Self {
-        GateOp { kind, qubits: vec![q0, q1], params: vec![theta] }
+        GateOp {
+            kind,
+            qubits: vec![q0, q1],
+            params: vec![theta],
+        }
     }
 
     pub fn three(kind: GateKind, q0: usize, q1: usize, q2: usize) -> Self {
-        GateOp { kind, qubits: vec![q0, q1, q2], params: vec![] }
+        GateOp {
+            kind,
+            qubits: vec![q0, q1, q2],
+            params: vec![],
+        }
     }
 
     pub fn multi(kind: GateKind, qubits: Vec<usize>) -> Self {
-        GateOp { kind, qubits, params: vec![] }
+        GateOp {
+            kind,
+            qubits,
+            params: vec![],
+        }
     }
 }
 
@@ -109,7 +226,8 @@ impl GateOp {
 pub fn apply_single_qubit(sv: &mut SparseStateVec, gate: &GateOp) {
     let qubit = gate.qubits[0];
     let old_entries: Vec<(u128, Amplitude)> = sv.drain();
-    let mut new_entries: std::collections::HashMap<u128, Amplitude> = std::collections::HashMap::new();
+    let mut new_entries: std::collections::HashMap<u128, Amplitude> =
+        std::collections::HashMap::new();
 
     for (state, amp) in old_entries {
         let bit = SparseStateVec::bit_of(state, qubit);
@@ -139,7 +257,10 @@ pub fn apply_single_qubit(sv: &mut SparseStateVec, gate: &GateOp) {
 
 /// Get the 2x2 unitary matrix for a single-qubit gate.
 /// Returns (m00, m01, m10, m11) i.e. [[m00, m01], [m10, m11]].
-pub fn gate_matrix_2x2(kind: &GateKind, params: &[f64]) -> (Amplitude, Amplitude, Amplitude, Amplitude) {
+pub fn gate_matrix_2x2(
+    kind: &GateKind,
+    params: &[f64],
+) -> (Amplitude, Amplitude, Amplitude, Amplitude) {
     match kind {
         GateKind::I => (c_one(), c_zero(), c_zero(), c_one()),
 
@@ -191,7 +312,12 @@ pub fn gate_matrix_2x2(kind: &GateKind, params: &[f64]) -> (Amplitude, Amplitude
 
         GateKind::Rz => {
             let theta = params[0];
-            (c_exp_i(-theta / 2.0), c_zero(), c_zero(), c_exp_i(theta / 2.0))
+            (
+                c_exp_i(-theta / 2.0),
+                c_zero(),
+                c_zero(),
+                c_exp_i(theta / 2.0),
+            )
         }
 
         GateKind::Phase | GateKind::U1 => {
@@ -284,7 +410,8 @@ fn apply_cz(sv: &mut SparseStateVec, q0: usize, q1: usize) {
 
 fn apply_cy(sv: &mut SparseStateVec, control: usize, target: usize) {
     let old: Vec<(u128, Amplitude)> = sv.drain();
-    let mut new_entries: std::collections::HashMap<u128, Amplitude> = std::collections::HashMap::new();
+    let mut new_entries: std::collections::HashMap<u128, Amplitude> =
+        std::collections::HashMap::new();
     for (state, amp) in old {
         if SparseStateVec::bit_of(state, control) == 1 {
             let bit_t = SparseStateVec::bit_of(state, target);
@@ -298,7 +425,9 @@ fn apply_cy(sv: &mut SparseStateVec, control: usize, target: usize) {
             *new_entries.entry(state).or_insert(c_zero()) += amp;
         }
     }
-    for (idx, amp) in new_entries { sv.set(idx, amp); }
+    for (idx, amp) in new_entries {
+        sv.set(idx, amp);
+    }
 }
 
 fn apply_swap(sv: &mut SparseStateVec, q0: usize, q1: usize) {
@@ -319,7 +448,8 @@ fn apply_swap(sv: &mut SparseStateVec, q0: usize, q1: usize) {
 
 fn apply_iswap(sv: &mut SparseStateVec, q0: usize, q1: usize) {
     let old: Vec<(u128, Amplitude)> = sv.drain();
-    let mut new_entries: std::collections::HashMap<u128, Amplitude> = std::collections::HashMap::new();
+    let mut new_entries: std::collections::HashMap<u128, Amplitude> =
+        std::collections::HashMap::new();
     for (state, amp) in old {
         let b0 = SparseStateVec::bit_of(state, q0);
         let b1 = SparseStateVec::bit_of(state, q1);
@@ -332,7 +462,9 @@ fn apply_iswap(sv: &mut SparseStateVec, q0: usize, q1: usize) {
             *new_entries.entry(state).or_insert(c_zero()) += amp;
         }
     }
-    for (idx, amp) in new_entries { sv.set(idx, amp); }
+    for (idx, amp) in new_entries {
+        sv.set(idx, amp);
+    }
 }
 
 fn apply_crz(sv: &mut SparseStateVec, control: usize, target: usize, theta: f64) {
@@ -355,7 +487,8 @@ fn apply_crz(sv: &mut SparseStateVec, control: usize, target: usize, theta: f64)
 fn apply_cp(sv: &mut SparseStateVec, control: usize, target: usize, theta: f64) {
     let entries: Vec<(u128, Amplitude)> = sv.drain();
     for (state, amp) in entries {
-        if SparseStateVec::bit_of(state, control) == 1 && SparseStateVec::bit_of(state, target) == 1 {
+        if SparseStateVec::bit_of(state, control) == 1 && SparseStateVec::bit_of(state, target) == 1
+        {
             sv.set(state, c_exp_i(theta) * amp);
         } else {
             sv.set(state, amp);
@@ -378,7 +511,8 @@ fn apply_ecr(sv: &mut SparseStateVec, q0: usize, q1: usize) {
     // ECR = Echoed Cross-Resonance gate (IBM native)
     // Decomposed as: (IX + XY) / sqrt(2)
     let old: Vec<(u128, Amplitude)> = sv.drain();
-    let mut new_entries: std::collections::HashMap<u128, Amplitude> = std::collections::HashMap::new();
+    let mut new_entries: std::collections::HashMap<u128, Amplitude> =
+        std::collections::HashMap::new();
     let h = FRAC_1_SQRT2;
     for (state, amp) in old {
         let b0 = SparseStateVec::bit_of(state, q0);
@@ -386,24 +520,44 @@ fn apply_ecr(sv: &mut SparseStateVec, q0: usize, q1: usize) {
         match (b0, b1) {
             (0, 0) => {
                 *new_entries.entry(state).or_insert(c_zero()) += c_real(h) * amp;
-                *new_entries.entry(SparseStateVec::flip_bit(SparseStateVec::flip_bit(state, q0), q1)).or_insert(c_zero()) += c(0.0, h) * amp;
+                *new_entries
+                    .entry(SparseStateVec::flip_bit(
+                        SparseStateVec::flip_bit(state, q0),
+                        q1,
+                    ))
+                    .or_insert(c_zero()) += c(0.0, h) * amp;
             }
             (0, 1) => {
-                *new_entries.entry(SparseStateVec::flip_bit(state, q1)).or_insert(c_zero()) += c_real(h) * amp;
-                *new_entries.entry(SparseStateVec::flip_bit(state, q0)).or_insert(c_zero()) += c(0.0, -h) * amp;
+                *new_entries
+                    .entry(SparseStateVec::flip_bit(state, q1))
+                    .or_insert(c_zero()) += c_real(h) * amp;
+                *new_entries
+                    .entry(SparseStateVec::flip_bit(state, q0))
+                    .or_insert(c_zero()) += c(0.0, -h) * amp;
             }
             (1, 0) => {
-                *new_entries.entry(SparseStateVec::flip_bit(SparseStateVec::flip_bit(state, q0), q1)).or_insert(c_zero()) += c(0.0, -h) * amp;
+                *new_entries
+                    .entry(SparseStateVec::flip_bit(
+                        SparseStateVec::flip_bit(state, q0),
+                        q1,
+                    ))
+                    .or_insert(c_zero()) += c(0.0, -h) * amp;
                 *new_entries.entry(state).or_insert(c_zero()) += c_real(h) * amp;
             }
             (1, 1) => {
-                *new_entries.entry(SparseStateVec::flip_bit(state, q0)).or_insert(c_zero()) += c(0.0, h) * amp;
-                *new_entries.entry(SparseStateVec::flip_bit(state, q1)).or_insert(c_zero()) += c_real(h) * amp;
+                *new_entries
+                    .entry(SparseStateVec::flip_bit(state, q0))
+                    .or_insert(c_zero()) += c(0.0, h) * amp;
+                *new_entries
+                    .entry(SparseStateVec::flip_bit(state, q1))
+                    .or_insert(c_zero()) += c_real(h) * amp;
             }
             _ => unreachable!(),
         }
     }
-    for (idx, amp) in new_entries { sv.set(idx, amp); }
+    for (idx, amp) in new_entries {
+        sv.set(idx, amp);
+    }
 }
 
 fn apply_ms(sv: &mut SparseStateVec, q0: usize, q1: usize) {
@@ -501,12 +655,7 @@ fn apply_rxx(sv: &mut SparseStateVec, q0: usize, q1: usize, theta: f64) {
     let sin_h = c(0.0, -(theta / 2.0).sin());
 
     for (state, amp) in old {
-        let b0 = SparseStateVec::bit_of(state, q0);
-        let b1 = SparseStateVec::bit_of(state, q1);
-        let flipped = SparseStateVec::flip_bit(
-            SparseStateVec::flip_bit(state, q0),
-            q1,
-        );
+        let flipped = SparseStateVec::flip_bit(SparseStateVec::flip_bit(state, q0), q1);
         *new_entries.entry(state).or_insert(c_zero()) += cos_h * amp;
         *new_entries.entry(flipped).or_insert(c_zero()) += sin_h * amp;
     }
@@ -526,10 +675,7 @@ fn apply_ryy(sv: &mut SparseStateVec, q0: usize, q1: usize, theta: f64) {
     for (state, amp) in old {
         let b0 = SparseStateVec::bit_of(state, q0);
         let b1 = SparseStateVec::bit_of(state, q1);
-        let flipped = SparseStateVec::flip_bit(
-            SparseStateVec::flip_bit(state, q0),
-            q1,
-        );
+        let flipped = SparseStateVec::flip_bit(SparseStateVec::flip_bit(state, q0), q1);
         let parity = if b0 == b1 { 1.0 } else { -1.0 };
         *new_entries.entry(state).or_insert(c_zero()) += cos_h * amp;
         *new_entries.entry(flipped).or_insert(c_zero()) += c_real(parity) * sin_h * amp;
@@ -555,12 +701,8 @@ pub fn apply_three_qubit(sv: &mut SparseStateVec, gate: &GateOp) {
         GateKind::Toffoli | GateKind::C3X => {
             apply_toffoli(sv, gate.qubits[0], gate.qubits[1], gate.qubits[2])
         }
-        GateKind::Fredkin => {
-            apply_fredkin(sv, gate.qubits[0], gate.qubits[1], gate.qubits[2])
-        }
-        GateKind::CCZ => {
-            apply_ccz(sv, gate.qubits[0], gate.qubits[1], gate.qubits[2])
-        }
+        GateKind::Fredkin => apply_fredkin(sv, gate.qubits[0], gate.qubits[1], gate.qubits[2]),
+        GateKind::CCZ => apply_ccz(sv, gate.qubits[0], gate.qubits[1], gate.qubits[2]),
         _ => panic!("Not a three-qubit gate: {:?}", gate.kind),
     }
 }
@@ -703,12 +845,18 @@ pub fn apply_qft(sv: &mut SparseStateVec, qubits: &[usize]) {
         apply_gate(sv, &GateOp::single(GateKind::H, qubits[i]));
         for j in (i + 1)..n {
             let angle = PI / (1u64 << (j - i)) as f64;
-            apply_gate(sv, &GateOp::two_param(GateKind::CP, qubits[j], qubits[i], angle));
+            apply_gate(
+                sv,
+                &GateOp::two_param(GateKind::CP, qubits[j], qubits[i], angle),
+            );
         }
     }
     // Swap qubits to get standard ordering
     for i in 0..(n / 2) {
-        apply_gate(sv, &GateOp::two(GateKind::SWAP, qubits[i], qubits[n - 1 - i]));
+        apply_gate(
+            sv,
+            &GateOp::two(GateKind::SWAP, qubits[i], qubits[n - 1 - i]),
+        );
     }
 }
 
@@ -716,12 +864,18 @@ pub fn apply_qft(sv: &mut SparseStateVec, qubits: &[usize]) {
 pub fn apply_iqft(sv: &mut SparseStateVec, qubits: &[usize]) {
     let n = qubits.len();
     for i in 0..(n / 2) {
-        apply_gate(sv, &GateOp::two(GateKind::SWAP, qubits[i], qubits[n - 1 - i]));
+        apply_gate(
+            sv,
+            &GateOp::two(GateKind::SWAP, qubits[i], qubits[n - 1 - i]),
+        );
     }
     for i in (0..n).rev() {
         for j in ((i + 1)..n).rev() {
             let angle = -PI / (1u64 << (j - i)) as f64;
-            apply_gate(sv, &GateOp::two_param(GateKind::CP, qubits[j], qubits[i], angle));
+            apply_gate(
+                sv,
+                &GateOp::two_param(GateKind::CP, qubits[j], qubits[i], angle),
+            );
         }
         apply_gate(sv, &GateOp::single(GateKind::H, qubits[i]));
     }
@@ -777,8 +931,15 @@ mod tests {
         let mut sv = SparseStateVec::new(100);
         let qubits: Vec<usize> = (0..100).collect();
         create_ghz(&mut sv, &qubits);
-        assert_eq!(sv.nnz(), 2, "100-qubit GHZ should have exactly 2 non-zero entries");
-        assert!(sv.memory_bytes() < 500, "100-qubit GHZ should use <500 bytes");
+        assert_eq!(
+            sv.nnz(),
+            2,
+            "100-qubit GHZ should have exactly 2 non-zero entries"
+        );
+        assert!(
+            sv.memory_bytes() < 500,
+            "100-qubit GHZ should use <500 bytes"
+        );
     }
 
     #[test]

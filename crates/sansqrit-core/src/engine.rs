@@ -5,6 +5,7 @@
 //! - Sparse (≤28 qubits): Only non-zero amplitudes, huge win for sparse circuits
 //! - Chunked (unlimited): Splits into 10-qubit chunks, parallel execution
 
+use crate::backend_planner::{BackendPlan, BackendPlanner, CircuitProfile, PlannerConfig};
 use crate::complex::*;
 use crate::gates::*;
 use crate::lookup::GateLookupTable;
@@ -15,7 +16,7 @@ use std::collections::HashMap;
 use std::sync::Arc;
 
 /// Engine selection mode.
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum EngineKind {
     Auto,
     Dense,
@@ -26,13 +27,8 @@ pub enum EngineKind {
 impl EngineKind {
     /// Auto-select engine based on qubit count.
     pub fn auto_select(n_qubits: usize) -> EngineKind {
-        if n_qubits <= 20 {
-            EngineKind::Dense
-        } else if n_qubits <= 28 {
-            EngineKind::Sparse
-        } else {
-            EngineKind::Chunked
-        }
+        let profile = CircuitProfile::new(n_qubits);
+        BackendPlanner::plan(&profile, &PlannerConfig::default()).runtime_engine
     }
 }
 
@@ -69,6 +65,21 @@ impl QuantumEngine {
             circuit_log: Vec::new(),
             chunk_size: 10,
         }
+    }
+
+    /// Return the explainable backend plan used by automatic selection.
+    pub fn backend_plan(n_qubits: usize, config: &PlannerConfig) -> BackendPlan {
+        BackendPlanner::plan(&CircuitProfile::new(n_qubits), config)
+    }
+
+    /// Create an engine and return the planner decision that selected it.
+    pub fn with_backend_plan(
+        n_qubits: usize,
+        requested: EngineKind,
+        config: &PlannerConfig,
+    ) -> (Self, BackendPlan) {
+        let plan = BackendPlanner::enforce_requested(n_qubits, requested, config);
+        (Self::with_engine(n_qubits, plan.runtime_engine), plan)
     }
 
     /// Create with specific lookup tables.
@@ -118,17 +129,39 @@ impl QuantumEngine {
     // ─── Convenience gate methods ──────────────────────────────────────
 
     // Single-qubit gates (18)
-    pub fn i(&mut self, q: usize)  { self.apply(GateOp::single(GateKind::I, q)); }
-    pub fn x(&mut self, q: usize)  { self.apply(GateOp::single(GateKind::X, q)); }
-    pub fn y(&mut self, q: usize)  { self.apply(GateOp::single(GateKind::Y, q)); }
-    pub fn z(&mut self, q: usize)  { self.apply(GateOp::single(GateKind::Z, q)); }
-    pub fn h(&mut self, q: usize)  { self.apply(GateOp::single(GateKind::H, q)); }
-    pub fn s(&mut self, q: usize)  { self.apply(GateOp::single(GateKind::S, q)); }
-    pub fn sdg(&mut self, q: usize) { self.apply(GateOp::single(GateKind::Sdg, q)); }
-    pub fn t(&mut self, q: usize)  { self.apply(GateOp::single(GateKind::T, q)); }
-    pub fn tdg(&mut self, q: usize) { self.apply(GateOp::single(GateKind::Tdg, q)); }
-    pub fn sx(&mut self, q: usize) { self.apply(GateOp::single(GateKind::SX, q)); }
-    pub fn sxdg(&mut self, q: usize) { self.apply(GateOp::single(GateKind::SXdg, q)); }
+    pub fn i(&mut self, q: usize) {
+        self.apply(GateOp::single(GateKind::I, q));
+    }
+    pub fn x(&mut self, q: usize) {
+        self.apply(GateOp::single(GateKind::X, q));
+    }
+    pub fn y(&mut self, q: usize) {
+        self.apply(GateOp::single(GateKind::Y, q));
+    }
+    pub fn z(&mut self, q: usize) {
+        self.apply(GateOp::single(GateKind::Z, q));
+    }
+    pub fn h(&mut self, q: usize) {
+        self.apply(GateOp::single(GateKind::H, q));
+    }
+    pub fn s(&mut self, q: usize) {
+        self.apply(GateOp::single(GateKind::S, q));
+    }
+    pub fn sdg(&mut self, q: usize) {
+        self.apply(GateOp::single(GateKind::Sdg, q));
+    }
+    pub fn t(&mut self, q: usize) {
+        self.apply(GateOp::single(GateKind::T, q));
+    }
+    pub fn tdg(&mut self, q: usize) {
+        self.apply(GateOp::single(GateKind::Tdg, q));
+    }
+    pub fn sx(&mut self, q: usize) {
+        self.apply(GateOp::single(GateKind::SX, q));
+    }
+    pub fn sxdg(&mut self, q: usize) {
+        self.apply(GateOp::single(GateKind::SXdg, q));
+    }
 
     pub fn rx(&mut self, q: usize, theta: f64) {
         self.apply(GateOp::single_param(GateKind::Rx, q, theta));
@@ -146,24 +179,54 @@ impl QuantumEngine {
         self.apply(GateOp::single_param(GateKind::U1, q, lambda));
     }
     pub fn u2(&mut self, q: usize, phi: f64, lambda: f64) {
-        self.apply(GateOp { kind: GateKind::U2, qubits: vec![q], params: vec![phi, lambda] });
+        self.apply(GateOp {
+            kind: GateKind::U2,
+            qubits: vec![q],
+            params: vec![phi, lambda],
+        });
     }
     pub fn u3(&mut self, q: usize, theta: f64, phi: f64, lambda: f64) {
-        self.apply(GateOp { kind: GateKind::U3, qubits: vec![q], params: vec![theta, phi, lambda] });
+        self.apply(GateOp {
+            kind: GateKind::U3,
+            qubits: vec![q],
+            params: vec![theta, phi, lambda],
+        });
     }
 
     // Two-qubit gates (21)
-    pub fn cnot(&mut self, c: usize, t: usize) { self.apply(GateOp::two(GateKind::CNOT, c, t)); }
-    pub fn cx(&mut self, c: usize, t: usize) { self.cnot(c, t); } // alias
-    pub fn cz(&mut self, q0: usize, q1: usize) { self.apply(GateOp::two(GateKind::CZ, q0, q1)); }
-    pub fn cy(&mut self, c: usize, t: usize) { self.apply(GateOp::two(GateKind::CY, c, t)); }
-    pub fn ch(&mut self, c: usize, t: usize) { self.apply(GateOp::two(GateKind::CH, c, t)); }
-    pub fn csx(&mut self, c: usize, t: usize) { self.apply(GateOp::two(GateKind::CSX, c, t)); }
-    pub fn swap(&mut self, q0: usize, q1: usize) { self.apply(GateOp::two(GateKind::SWAP, q0, q1)); }
-    pub fn iswap(&mut self, q0: usize, q1: usize) { self.apply(GateOp::two(GateKind::ISWAP, q0, q1)); }
-    pub fn sqrt_swap(&mut self, q0: usize, q1: usize) { self.apply(GateOp::two(GateKind::SqrtSWAP, q0, q1)); }
-    pub fn fswap(&mut self, q0: usize, q1: usize) { self.apply(GateOp::two(GateKind::FSWAP, q0, q1)); }
-    pub fn dcx(&mut self, q0: usize, q1: usize) { self.apply(GateOp::two(GateKind::DCX, q0, q1)); }
+    pub fn cnot(&mut self, c: usize, t: usize) {
+        self.apply(GateOp::two(GateKind::CNOT, c, t));
+    }
+    pub fn cx(&mut self, c: usize, t: usize) {
+        self.cnot(c, t);
+    } // alias
+    pub fn cz(&mut self, q0: usize, q1: usize) {
+        self.apply(GateOp::two(GateKind::CZ, q0, q1));
+    }
+    pub fn cy(&mut self, c: usize, t: usize) {
+        self.apply(GateOp::two(GateKind::CY, c, t));
+    }
+    pub fn ch(&mut self, c: usize, t: usize) {
+        self.apply(GateOp::two(GateKind::CH, c, t));
+    }
+    pub fn csx(&mut self, c: usize, t: usize) {
+        self.apply(GateOp::two(GateKind::CSX, c, t));
+    }
+    pub fn swap(&mut self, q0: usize, q1: usize) {
+        self.apply(GateOp::two(GateKind::SWAP, q0, q1));
+    }
+    pub fn iswap(&mut self, q0: usize, q1: usize) {
+        self.apply(GateOp::two(GateKind::ISWAP, q0, q1));
+    }
+    pub fn sqrt_swap(&mut self, q0: usize, q1: usize) {
+        self.apply(GateOp::two(GateKind::SqrtSWAP, q0, q1));
+    }
+    pub fn fswap(&mut self, q0: usize, q1: usize) {
+        self.apply(GateOp::two(GateKind::FSWAP, q0, q1));
+    }
+    pub fn dcx(&mut self, q0: usize, q1: usize) {
+        self.apply(GateOp::two(GateKind::DCX, q0, q1));
+    }
     pub fn crx(&mut self, c: usize, t: usize, theta: f64) {
         self.apply(GateOp::two_param(GateKind::CRx, c, t, theta));
     }
@@ -177,7 +240,11 @@ impl QuantumEngine {
         self.apply(GateOp::two_param(GateKind::CP, c, t, theta));
     }
     pub fn cu(&mut self, c: usize, t: usize, theta: f64, phi: f64, lambda: f64) {
-        self.apply(GateOp { kind: GateKind::CU, qubits: vec![c, t], params: vec![theta, phi, lambda] });
+        self.apply(GateOp {
+            kind: GateKind::CU,
+            qubits: vec![c, t],
+            params: vec![theta, phi, lambda],
+        });
     }
     pub fn rxx(&mut self, q0: usize, q1: usize, theta: f64) {
         self.apply(GateOp::two_param(GateKind::RXX, q0, q1, theta));
@@ -196,11 +263,15 @@ impl QuantumEngine {
     pub fn toffoli(&mut self, c0: usize, c1: usize, t: usize) {
         self.apply(GateOp::three(GateKind::Toffoli, c0, c1, t));
     }
-    pub fn ccx(&mut self, c0: usize, c1: usize, t: usize) { self.toffoli(c0, c1, t); } // alias
+    pub fn ccx(&mut self, c0: usize, c1: usize, t: usize) {
+        self.toffoli(c0, c1, t);
+    } // alias
     pub fn fredkin(&mut self, c: usize, q1: usize, q2: usize) {
         self.apply(GateOp::three(GateKind::Fredkin, c, q1, q2));
     }
-    pub fn cswap(&mut self, c: usize, q1: usize, q2: usize) { self.fredkin(c, q1, q2); } // alias
+    pub fn cswap(&mut self, c: usize, q1: usize, q2: usize) {
+        self.fredkin(c, q1, q2);
+    } // alias
     pub fn ccz(&mut self, q0: usize, q1: usize, q2: usize) {
         self.apply(GateOp::three(GateKind::CCZ, q0, q1, q2));
     }
@@ -233,17 +304,23 @@ impl QuantumEngine {
 
     /// Apply Hadamard to all qubits.
     pub fn h_all(&mut self) {
-        for q in 0..self.n_qubits() { self.h(q); }
+        for q in 0..self.n_qubits() {
+            self.h(q);
+        }
     }
 
     /// Apply Rx to all qubits with the same angle.
     pub fn rx_all(&mut self, theta: f64) {
-        for q in 0..self.n_qubits() { self.rx(q, theta); }
+        for q in 0..self.n_qubits() {
+            self.rx(q, theta);
+        }
     }
 
     /// Apply Ry to all qubits.
     pub fn ry_all(&mut self, theta: f64) {
-        for q in 0..self.n_qubits() { self.ry(q, theta); }
+        for q in 0..self.n_qubits() {
+            self.ry(q, theta);
+        }
     }
 
     // ─── Built-in circuits ────────────────────────────────────────────
@@ -275,7 +352,9 @@ impl QuantumEngine {
     /// Measure a single qubit, collapsing the state. Returns 0 or 1.
     pub fn measure(&mut self, qubit: usize) -> u8 {
         let mut rng = rand::thread_rng();
-        let p0: f64 = self.state.iter()
+        let p0: f64 = self
+            .state
+            .iter()
             .filter(|(&idx, _)| SparseStateVec::bit_of(idx, qubit) == 0)
             .map(|(_, amp)| amp.norm_sqr())
             .sum();
@@ -349,7 +428,8 @@ impl QuantumEngine {
 
     /// Get all probabilities.
     pub fn probabilities(&self) -> Vec<(String, f64)> {
-        self.state.probabilities()
+        self.state
+            .probabilities()
             .into_iter()
             .map(|(idx, p)| (self.state.index_to_bitstring(idx), p))
             .collect()
@@ -357,7 +437,8 @@ impl QuantumEngine {
 
     /// Get the full statevector as (bitstring, amplitude) pairs.
     pub fn statevector(&self) -> Vec<(String, Amplitude)> {
-        self.state.iter()
+        self.state
+            .iter()
             .map(|(&idx, &amp)| (self.state.index_to_bitstring(idx), amp))
             .collect()
     }
@@ -411,7 +492,8 @@ impl QuantumEngine {
         }
 
         // S = -Σ p_i log(p_i)
-        rho_diag.iter()
+        rho_diag
+            .iter()
             .filter(|&&p| p > 1e-30)
             .map(|&p| -p * p.ln())
             .sum()
@@ -438,7 +520,9 @@ impl QuantumEngine {
             let offset = c * cs;
             let size = cs.min(n - offset);
             // Count entries that have non-zero bits in this chunk
-            let nnz = self.state.iter()
+            let nnz = self
+                .state
+                .iter()
                 .filter(|(&idx, _)| {
                     let mask = ((1u128 << size) - 1) << offset;
                     (idx & mask) != 0 || idx == 0
@@ -518,6 +602,19 @@ mod tests {
         assert_eq!(EngineKind::auto_select(20), EngineKind::Dense);
         assert_eq!(EngineKind::auto_select(25), EngineKind::Sparse);
         assert_eq!(EngineKind::auto_select(50), EngineKind::Chunked);
+    }
+
+    #[test]
+    fn test_safe_backend_plan_for_dense_120() {
+        let config = PlannerConfig::default();
+        let (engine, plan) = QuantumEngine::with_backend_plan(120, EngineKind::Dense, &config);
+
+        assert_eq!(engine.engine_kind, EngineKind::Chunked);
+        assert!(plan.shard_plan.is_some());
+        assert!(plan
+            .warnings
+            .iter()
+            .any(|warning| warning.contains("dense request exceeds")));
     }
 
     #[test]

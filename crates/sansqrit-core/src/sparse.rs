@@ -4,7 +4,7 @@
 //! the non-zero entries. A 100-qubit GHZ state requires only 2 entries
 //! (~100 bytes) instead of 2^100 × 16 bytes.
 
-use crate::complex::{Amplitude, c_zero, c_one};
+use crate::complex::{c_one, c_zero, Amplitude};
 use dashmap::DashMap;
 use std::collections::HashMap;
 
@@ -166,7 +166,11 @@ impl SparseStateVec {
     pub fn index_to_bitstring(&self, index: u128) -> String {
         let mut s = String::with_capacity(self.n_qubits);
         for i in (0..self.n_qubits).rev() {
-            s.push(if Self::bit_of(index, i) == 1 { '1' } else { '0' });
+            s.push(if Self::bit_of(index, i) == 1 {
+                '1'
+            } else {
+                '0'
+            });
         }
         s
     }

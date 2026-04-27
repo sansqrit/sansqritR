@@ -3,9 +3,9 @@
 //! State preparation circuits, encodings, error correction codes,
 //! ansatz circuits for VQE, arithmetic circuits, and utility circuits.
 
+use crate::complex::*;
 use crate::gates::*;
 use crate::sparse::SparseStateVec;
-use crate::complex::*;
 use std::f64::consts::PI;
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -16,7 +16,9 @@ use std::f64::consts::PI;
 /// Exactly one qubit is |1⟩ in each term — maximally symmetric.
 pub fn create_w_state(sv: &mut SparseStateVec, qubits: &[usize]) {
     let n = qubits.len();
-    if n == 0 { return; }
+    if n == 0 {
+        return;
+    }
     if n == 1 {
         apply_gate(sv, &GateOp::single(GateKind::X, qubits[0]));
         return;
@@ -28,14 +30,8 @@ pub fn create_w_state(sv: &mut SparseStateVec, qubits: &[usize]) {
     // Iteratively distribute the excitation
     for i in 0..(n - 1) {
         let theta = ((n - i) as f64).recip().acos() * 2.0;
-        apply_gate(
-            sv,
-            &GateOp::single_param(GateKind::Ry, qubits[i], theta),
-        );
-        apply_gate(
-            sv,
-            &GateOp::two(GateKind::CNOT, qubits[i], qubits[i + 1]),
-        );
+        apply_gate(sv, &GateOp::single_param(GateKind::Ry, qubits[i], theta));
+        apply_gate(sv, &GateOp::two(GateKind::CNOT, qubits[i], qubits[i + 1]));
         // Correct amplitude: un-rotate the first qubit
         if i > 0 {
             apply_gate(sv, &GateOp::single(GateKind::X, qubits[i]));
@@ -43,7 +39,7 @@ pub fn create_w_state(sv: &mut SparseStateVec, qubits: &[usize]) {
     }
     // Re-normalize by fixing the state manually
     let amp = c_real(1.0 / (n as f64).sqrt());
-    let old: Vec<(u128, Amplitude)> = sv.drain();
+    sv.drain();
     for i in 0..n {
         let mut basis = 0u128;
         basis |= 1u128 << qubits[i];
@@ -68,7 +64,9 @@ pub fn create_cluster_state(sv: &mut SparseStateVec, qubits: &[usize]) {
 /// with exactly k ones. E.g., |D(3,1)⟩ = W state.
 pub fn create_dicke_state(sv: &mut SparseStateVec, qubits: &[usize], k: usize) {
     let n = qubits.len();
-    if k > n { return; }
+    if k > n {
+        return;
+    }
 
     // Generate all n-choose-k basis states with exactly k ones
     let states = combinations(n, k);
@@ -89,8 +87,12 @@ fn combinations(n: usize, k: usize) -> Vec<Vec<usize>> {
     let mut result = Vec::new();
     let mut combo = vec![0usize; k];
     fn recurse(
-        start: usize, depth: usize, n: usize, k: usize,
-        combo: &mut Vec<usize>, result: &mut Vec<Vec<usize>>,
+        start: usize,
+        depth: usize,
+        n: usize,
+        k: usize,
+        combo: &mut Vec<usize>,
+        result: &mut Vec<Vec<usize>>,
     ) {
         if depth == k {
             result.push(combo.clone());
@@ -116,11 +118,7 @@ pub fn create_cat_state(sv: &mut SparseStateVec, qubits: &[usize]) {
 
 /// Draper QFT Adder: add register B into register A using QFT.
 /// a_qubits and b_qubits must be the same length.
-pub fn draper_qft_adder(
-    sv: &mut SparseStateVec,
-    a_qubits: &[usize],
-    b_qubits: &[usize],
-) {
+pub fn draper_qft_adder(sv: &mut SparseStateVec, a_qubits: &[usize], b_qubits: &[usize]) {
     let n = a_qubits.len().min(b_qubits.len());
 
     // QFT on register A
@@ -156,10 +154,7 @@ pub fn quantum_multiplier(
         for j in 0..n {
             if i + j < result_qubits.len() {
                 // Controlled Ry rotation as proxy for addition
-                apply_gate(
-                    sv,
-                    &GateOp::two(GateKind::CNOT, b_qubits[i], a_qubits[j]),
-                );
+                apply_gate(sv, &GateOp::two(GateKind::CNOT, b_qubits[i], a_qubits[j]));
                 if i + j < result_qubits.len() {
                     apply_gate(
                         sv,
@@ -167,10 +162,7 @@ pub fn quantum_multiplier(
                     );
                 }
                 // Undo the first CNOT
-                apply_gate(
-                    sv,
-                    &GateOp::two(GateKind::CNOT, b_qubits[i], a_qubits[j]),
-                );
+                apply_gate(sv, &GateOp::two(GateKind::CNOT, b_qubits[i], a_qubits[j]));
             }
         }
     }
@@ -189,7 +181,9 @@ pub fn amplitude_encoding(sv: &mut SparseStateVec, qubits: &[usize], data: &[f64
 
     // Normalize
     let norm: f64 = data.iter().map(|x| x * x).sum::<f64>().sqrt();
-    if norm < 1e-15 { return; }
+    if norm < 1e-15 {
+        return;
+    }
 
     let _ = sv.drain();
     for i in 0..padded_len {
@@ -258,16 +252,15 @@ pub fn random_circuit(sv: &mut SparseStateVec, qubits: &[usize], depth: usize, s
         }
         // Random CNOT layer (linear connectivity)
         for i in (0..n - 1).step_by(2) {
-            apply_gate(
-                sv,
-                &GateOp::two(GateKind::CNOT, qubits[i], qubits[i + 1]),
-            );
+            apply_gate(sv, &GateOp::two(GateKind::CNOT, qubits[i], qubits[i + 1]));
         }
     }
 }
 
 fn lcg_next(state: u64) -> u64 {
-    state.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407)
+    state
+        .wrapping_mul(6364136223846793005)
+        .wrapping_add(1442695040888963407)
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -360,22 +353,14 @@ pub fn hardware_efficient_ansatz(
         }
         // Entangling layer (linear connectivity)
         for i in 0..(n - 1) {
-            apply_gate(
-                sv,
-                &GateOp::two(GateKind::CNOT, qubits[i], qubits[i + 1]),
-            );
+            apply_gate(sv, &GateOp::two(GateKind::CNOT, qubits[i], qubits[i + 1]));
         }
     }
 }
 
 /// UCCSD ansatz: Unitary Coupled Cluster Singles and Doubles.
 /// Chemistry-standard variational ansatz for molecular simulations.
-pub fn uccsd_ansatz(
-    sv: &mut SparseStateVec,
-    qubits: &[usize],
-    params: &[f64],
-    n_electrons: usize,
-) {
+pub fn uccsd_ansatz(sv: &mut SparseStateVec, qubits: &[usize], params: &[f64], n_electrons: usize) {
     let n = qubits.len();
     let mut p = 0;
 
@@ -391,22 +376,10 @@ pub fn uccsd_ansatz(
                 let theta = params[p];
                 p += 1;
                 // e^(θ(a†_a a_i - a†_i a_a)) via Givens rotation
-                apply_gate(
-                    sv,
-                    &GateOp::single_param(GateKind::Ry, qubits[i], theta),
-                );
-                apply_gate(
-                    sv,
-                    &GateOp::two(GateKind::CNOT, qubits[i], qubits[a]),
-                );
-                apply_gate(
-                    sv,
-                    &GateOp::single_param(GateKind::Ry, qubits[a], -theta),
-                );
-                apply_gate(
-                    sv,
-                    &GateOp::two(GateKind::CNOT, qubits[i], qubits[a]),
-                );
+                apply_gate(sv, &GateOp::single_param(GateKind::Ry, qubits[i], theta));
+                apply_gate(sv, &GateOp::two(GateKind::CNOT, qubits[i], qubits[a]));
+                apply_gate(sv, &GateOp::single_param(GateKind::Ry, qubits[a], -theta));
+                apply_gate(sv, &GateOp::two(GateKind::CNOT, qubits[i], qubits[a]));
             }
         }
     }
@@ -420,34 +393,13 @@ pub fn uccsd_ansatz(
                         let theta = params[p];
                         p += 1;
                         // Simplified doubles: CNOT ladder + Rz
-                        apply_gate(
-                            sv,
-                            &GateOp::two(GateKind::CNOT, qubits[i], qubits[j]),
-                        );
-                        apply_gate(
-                            sv,
-                            &GateOp::two(GateKind::CNOT, qubits[j], qubits[a]),
-                        );
-                        apply_gate(
-                            sv,
-                            &GateOp::two(GateKind::CNOT, qubits[a], qubits[b]),
-                        );
-                        apply_gate(
-                            sv,
-                            &GateOp::single_param(GateKind::Rz, qubits[b], theta),
-                        );
-                        apply_gate(
-                            sv,
-                            &GateOp::two(GateKind::CNOT, qubits[a], qubits[b]),
-                        );
-                        apply_gate(
-                            sv,
-                            &GateOp::two(GateKind::CNOT, qubits[j], qubits[a]),
-                        );
-                        apply_gate(
-                            sv,
-                            &GateOp::two(GateKind::CNOT, qubits[i], qubits[j]),
-                        );
+                        apply_gate(sv, &GateOp::two(GateKind::CNOT, qubits[i], qubits[j]));
+                        apply_gate(sv, &GateOp::two(GateKind::CNOT, qubits[j], qubits[a]));
+                        apply_gate(sv, &GateOp::two(GateKind::CNOT, qubits[a], qubits[b]));
+                        apply_gate(sv, &GateOp::single_param(GateKind::Rz, qubits[b], theta));
+                        apply_gate(sv, &GateOp::two(GateKind::CNOT, qubits[a], qubits[b]));
+                        apply_gate(sv, &GateOp::two(GateKind::CNOT, qubits[j], qubits[a]));
+                        apply_gate(sv, &GateOp::two(GateKind::CNOT, qubits[i], qubits[j]));
                     }
                 }
             }
@@ -462,7 +414,7 @@ pub fn uccsd_ansatz(
 /// Entanglement swapping: transfer entanglement from (A,B) pair to (A,D) pair.
 /// qubits = [A, B, C, D] where (A,B) and (C,D) are Bell pairs.
 pub fn entanglement_swapping(sv: &mut SparseStateVec, qubits: &[usize; 4]) {
-    let (a, b, _c, d) = (qubits[0], qubits[1], qubits[2], qubits[3]);
+    let (_a, b, _c, _d) = (qubits[0], qubits[1], qubits[2], qubits[3]);
 
     // Create two Bell pairs: (A,B) and (C,D)
     create_bell(sv, qubits[0], qubits[1]);

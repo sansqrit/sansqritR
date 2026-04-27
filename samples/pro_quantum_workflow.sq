@@ -1,0 +1,41 @@
+print("Professional quantum workflow")
+
+let capabilities = market_standard_review()
+print("capability areas:", len(capabilities))
+
+let workflow = quantum_workflow("chemistry hamiltonian active-space materials", 120)
+print("workflow kind:", workflow["kind"])
+print("workflow stages:", len(workflow["stages"]))
+
+let t0 = pauli_term("ZI", -1.052373, [0])
+let t1 = pauli_term("IZ", 0.397937, [1])
+let t2 = pauli_term("ZZ", -0.397937, [0, 1])
+let t3 = pauli_term("XX", 0.180931, [0, 1])
+let h2 = hamiltonian([t0, t1, t2, t3])
+print("hamiltonian terms:", h2["term_count"])
+
+let qubo = qubo_model(32, 96)
+print("qubo vars:", qubo["n_vars"])
+
+let oracle = oracle_model("portfolio_constraint_oracle", 64, 250000)
+print("oracle:", oracle["name"])
+
+let ft = ft_resource_estimate(256, 1000000000, 0.001)
+print("distance hint:", ft["code_distance_hint"])
+
+let code = surface_code_plan(128, 11, 11, 0.001)
+print("surface physical lower bound:", code["physical_qubits_lower_bound"])
+
+let target = hardware_transpile_plan("ibm", 127)
+print("target basis gates:", len(target["basis_gates"]))
+
+let mitigation = error_mitigation_plan("high", 8192)
+print("mitigation methods:", len(mitigation["methods"]))
+
+let sampler = sampler_plan(4096)
+let estimator = estimator_plan()
+print("sampler primitive:", sampler["primitive"])
+print("estimator primitive:", estimator["primitive"])
+
+let sparse = sparse_backend_plan(120, 2)
+print("sparse 120 method:", sparse["selected_method"])
